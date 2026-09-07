@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+
+@theme{
+    --font-love:"Ang DaunTep";
+    --font-base:"AKbalthom Kbach";
+    --font-eng:"Romnea"
+}
