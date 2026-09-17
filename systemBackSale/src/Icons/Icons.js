@@ -3,7 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 
-import { faBell,faEnvelope, } from '@fortawesome/free-regular-svg-icons'
+import { 
+            faBell,
+            faEnvelope
+        } from '@fortawesome/free-regular-svg-icons'
 
 
 import {
@@ -13,25 +16,38 @@ import {
       faPenFancy,
       faTrashCan,
       faPlus,
-      faMagnifyingGlass
+      faMagnifyingGlass,
+  
+      faAnglesRight,
+      faRightToBracket,
+      faArrowLeftLong,
+      faCameraRotate,
+    //  testing
+
+      faUpLong
     
     } from "@fortawesome/free-solid-svg-icons";
 
 // Add icons to library
 library.add(
     // ----testing icons
-            // faUser, 
-            faArrowRight, 
-            // faFacebook,
-
-            //--- used
+    faArrowRight, 
+    faFacebook,
+    faUpLong,
+    //--- used
+            faUser, 
             faDesktop,
             faBell,
             faEnvelope,        
             faPenFancy,
             faTrashCan,
             faPlus,
-            faMagnifyingGlass
+            faMagnifyingGlass,
+            faAnglesRight,
+            faRightToBracket,
+            faArrowLeftLong,
+            faCameraRotate
+          
         );
 
 export {FontAwesomeIcon}

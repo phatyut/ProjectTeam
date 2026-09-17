@@ -20,13 +20,14 @@
         </div>
 
         <!-- Add Button -->
-        <button
-                @click="showAdd = true"
-                class="flex items-center justify-center   bg-white/10  ring-1 ring-white/20 gap-2 rounded-xl  px-5 py-3 font-bold text-white
-                      shadow-lg transition hover:bg-green-50 hover:shadow-xl active:scale-95  " >
-              <span class="text-xl">＋</span>
-              Add Product
-        </button>
+         
+           <button
+           @click="showAdd = true"
+           class="flex items-center justify-center   bg-white/10  ring-1 ring-white/20 gap-2 rounded-xl  px-5 py-3 font-bold text-white
+           shadow-lg transition hover:bg-green-50 hover:shadow-xl active:scale-95  " >
+           <span class="text-xl">＋</span>
+           Add Product
+          </button>
       </div>
     </div>
 

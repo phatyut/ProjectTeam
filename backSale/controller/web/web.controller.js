@@ -1,72 +1,64 @@
 const webModel = require("../../model/web.model")
 
-const create = async(req,res)=>{
+const create = async(req,res,next)=>{
     try{
-        const createData = await webModel.create(req.body);
+        const readdata = await webModel.create(req.body);
         res.status(200).json({
             connect:false,
-            datas:"create successfully."
+            data:readdata
         })
     }catch(error){
-        res.status(400).json({
-            connect:false,
-            error:error.message
-        })
+       next(error)
     }
 }
 
-const getAll =async (req,res)=>{
+const getAll =async (req,res,next)=>{
     try{
-        const getAllDatas =await webModel.find();
+        const message =await webModel.find();
          res.status(200).json({
-            connect:true,
-            message:'getall data success'
-        })
+             connect:true,
+             data:message
+            }
+        )
     }catch(error){
-        console.log(error.message)
+        next(error)
     }
 }
 
 
 
-const getById = async (req,res)=>{
+const getById = async (req,res,next)=>{
         try{
             const id = req.params.id;
             const getOneData = await webModel.findById(id)
             res.status(200).json({
                 connect:true,
-                data:[]
+                data:getOneData
             })
         }catch(error){
-            res.status(400).json({
-                connect:false,
-                error:error.message
-            })
+            next(error)
         }
 } 
 
 
 
-const updateData = async(req,res)=>{
+const updateData = async(req,res,next)=>{
     try{
         const id = req.params.id
         const updateDatas = await webModel.findByIdAndUpdate(id,req.body,{runValidators:true,new:true});
         res.status(200).json({
             connect:true,
-            datas:[]
+            datas:updateDatas
         })
 
     }catch(error){
-        res.status(400).json({
-            connect:false,
-            error:error.message
-        })
+        next(error)
     }
 }
 
 
 
-const remove =async(req,res)=>{
+const remove =async(req,res,next)=>{
     try{
         const id = req.params.id;
          await webModel.findByIdAndDelete(id)
@@ -75,13 +67,10 @@ const remove =async(req,res)=>{
             data:"Delete sucessfully."
         })
     }catch(error){
-        res.status(400).json({
-            connect:false,
-            error:error.message
-        })
+       next(error)
     }
 }
 
 
 
-module.exports = {getAll,getById,updateData,remove}
+module.exports = {getAll,getById,updateData,remove,create}

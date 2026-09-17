@@ -1,7 +1,9 @@
 <template>
- <div class="relative w-full h-screen bg-slate-200">
+ <div class="relative w-full h-screen">
       <Head></Head>
-      <Menu></Menu>
+      <div class="sticky top-0 z-10">
+           <!-- <Menu></Menu> -->
+      </div>
       <router-view></router-view>
  </div>
 </template>

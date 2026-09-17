@@ -266,7 +266,6 @@ import { ref } from "vue";
 
 export default {
   name: "AddProduct",
-
   emits: ["save", "cancel"],
 
   setup(props, { emit }) {

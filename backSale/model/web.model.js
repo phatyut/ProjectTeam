@@ -5,48 +5,45 @@ const webSchema = new mongoose.Schema({
         type:String,
         required:[true,"image is required."]
     },
-    names:{
+    title:{
         type:String,
-        required:[true,"name is required."]
+        required:[true,"Title is required."]
     },
     cpu:{
         type:String,
         required:[true,"CPU is required."]
     },
-    typeOfRam:{
+    ram:{
         type:String,
-        required:[true,"typeOfRam is required."]
+        required:[true,"CPU is required."]
     },
-    sizeOfRam:{
-        type:String,
-        required:[true,"SizeOfRam is required."]
-    },
-    costprice:{
-        type:Number,
-        required:[true,"Price is required."]
-    },
-    SalePrice:{
-        type:Number,
-        required:[true,"Price is required."]
-    },
-    storageofType:{
-        type:String,
-        required:[true,"StorageOfType is required."]
-    },
-    storageOfSize:{
+    ssd:{
         type:Number,
         required:[true,"StorageOfSize is required."]
+    },   
+    model:{
+        type:String,
+        required:[true,"Model is required."]
     },
-    batterySize:{
+    brand:{
+        type:String,
+        required:[true,"name is required."]
+    },
+    salePrice:{
         type:Number,
-        required:[true,"Batterysize is required."]
+        required:[true,"Price is required."]
     },
+    deals:{
+        type:Number,
+        default:1
+    },
+    timeOfDeals:Date,
     description:{
         type:String
     }
 
 
-})
+},{timestamps:true})
 
 
 const webModel = mongoose.model("WebModel",webSchema);

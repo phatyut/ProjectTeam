@@ -1,8 +1,14 @@
+
 @import "tailwindcss";
+@plugin "daisyui";
+
+@import "flowbite-vue/index.css";
+@plugin "flowbite/plugin";
 
 
 @theme{
     --font-love:"Ang DaunTep";
     --font-base:"AKbalthom Kbach";
-    --font-eng:"Romnea"
+    --font-eng:"Romnea";
+    --font-eng12:"Kh BL LazySmooth"
 }

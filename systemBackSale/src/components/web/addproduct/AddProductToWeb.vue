@@ -1,6 +1,6 @@
 
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-500/50 px-10 py-2 backdrop-blur-sm">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-100 px-10 py-2 backdrop-blur-sm">
     <div class="relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- ================= HEADER ================= -->
       <div class="flex shrink-0 items-center justify-between bg-green-600 px-8 py-5">
@@ -71,13 +71,9 @@
             <div class="min-w-0">
 
               <!-- ================= PRODUCT INFORMATION ================= -->
-              <section
-                class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
+              <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div class="mb-4 flex items-center gap-3">
-                  <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600"
-                  >
+                  <div  class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
                     <!-- Product Icon -->
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -122,22 +118,25 @@
                       class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
                     />
                   </div>
-
-                  <!-- DESCRIPTION -->
                   <div>
                     <label
                       class="mb-1.5 block text-sm font-semibold text-slate-700"
                     >
-                      Description
+                      Product Model
+                      <span class="text-red-500">*</span>
                     </label>
 
-                    <textarea
-                      v-model="form.description"
-                      rows="2"
-                      placeholder="Enter product description..."
-                      class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                    ></textarea>
+                    <input
+                      v-model="form.name"
+                      type="text"
+                      placeholder="e.g. ASUS ROG Strix G16"
+                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                    />
                   </div>
+
+                  <!-- DESCRIPTION -->
+
+                 
 
                   <!-- CATEGORY / BRAND / MODEL -->
                   <div class="grid grid-cols-3 gap-4">
@@ -197,40 +196,15 @@
               </section>
 
               <!-- ================= SPECIFICATIONS ================= -->
-              <section
-                class="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
+              <section class="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div class="mb-4 flex items-center gap-3">
-                  <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600"
-                  >
+                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
                     <!-- CPU Icon -->
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <rect
-                        width="16"
-                        height="16"
-                        x="4"
-                        y="4"
-                        rx="2"
-                      />
-                      <rect
-                        width="6"
-                        height="6"
-                        x="9"
-                        y="9"
-                        rx="1"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3"
-                      />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <rect width="16" height="16" x="4" y="4" rx="2"/>
+                      <rect width="6" height="6" x="9" y="9" rx="1"/>
+                      <path stroke-linecap="round" d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3" />
                     </svg>
                   </div>
 
@@ -244,35 +218,29 @@
                   </div>
                 </div>
 
+
+                <div class="flex flex-col gap-3">
+
+             
                 <div class="grid grid-cols-3 gap-4">
                   <!-- CPU -->
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
                       CPU
                     </label>
 
-                    <input
-                      v-model="form.cpu"
-                      type="text"
-                      placeholder="Core i7"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                    />
+                    <input v-model="form.cpu" type="text" placeholder="Core i7"
+                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
                   </div>
 
                   <!-- RAM -->
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
                       RAM
                     </label>
 
-                    <select
-                      v-model="form.ram"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                    >
+                    <select v-model="form.ram"
+                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10">
                       <option value="">Select RAM</option>
                       <option value="8GB">8 GB</option>
                       <option value="16GB">16 GB</option>
@@ -283,16 +251,12 @@
 
                   <!-- SSD -->
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
                       Storage
                     </label>
 
-                    <select
-                      v-model="form.ssd"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                    >
+                    <select v-model="form.ssd"
+                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10" >
                       <option value="">Select Storage</option>
                       <option value="256GB">256 GB SSD</option>
                       <option value="512GB">512 GB SSD</option>
@@ -301,37 +265,37 @@
                     </select>
                   </div>
                 </div>
-              </section>
+                 <div>
+                    <label
+                      class="mb-1.5 block text-sm font-semibold text-slate-700"
+                    >
+                      Description
+                    </label>
 
-              <!-- ================= PRICING ================= -->
-             
+                    <textarea
+                      v-model="form.description"
+                      rows="2"
+                      placeholder="Enter product description..."
+                      class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                    ></textarea>
+                  </div>
+                  </div>
+              </section>
             </div>
 
             <!-- ================================================= -->
             <!-- RIGHT SIDE - 40% -->
             <!-- ================================================= -->
              <div class="flex flex-col gap-4">
-                  <section
-                class=" rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
+                  <section class=" rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div class="mb-4 flex items-center gap-3">
-                  <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600"
-                  >
+                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
                     <!-- Dollar Icon -->
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <circle cx="12" cy="12" r="9" />
-                      <path
-                        stroke-linecap="round"
-                        d="M12 7v10m3-7.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 2 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2"
-                      />
+                      <path stroke-linecap="round"
+                        d="M12 7v10m3-7.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 2 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2" />
                     </svg>
                   </div>
 
@@ -348,52 +312,64 @@
                 <div class="grid grid-cols-2 gap-4">
                   <!-- COST PRICE -->
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700" >
                       Cost Price
                     </label>
 
                     <div class="relative">
-                      <span
-                        class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400"
-                      >
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400" >
                         $
                       </span>
-
                       <input
-                        v-model.number="form.costPrice"
-                        type="number"
-                        min="0"
-                        placeholder="0.00"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-8 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                      />
+                        v-model.number="form.costPrice" type="number" min="0"  placeholder="0.00"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-8 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
                     </div>
                   </div>
 
                   <!-- SALE PRICE -->
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
                       Sale Price
                       <span class="text-red-500">*</span>
                     </label>
 
                     <div class="relative ">
-                      <span
-                        class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600"
-                      >
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
                         $
                       </span>
 
-                      <input
-                        v-model.number="form.salePrice"
-                        type="number"
-                        min="0"
-                        placeholder="0.00"
-                        class="w-full  rounded-xl border border-green-200 bg-green-50/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                      />
+                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
+                        class="w-full  rounded-xl border border-green-200 bg-green-50/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
+                      deals
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative ">
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
+                        %
+                      </span>
+
+                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
+                        class="w-full  rounded-xl border border-green-200 bg-green-50/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="mb-1.5 block text-sm font-semibold  text-slate-700">
+                      Old Price
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative ">
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
+                        $
+                      </span>
+
+                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
+                        class="w-full  rounded-xl border border-green-200 bg-gray-300/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10" />
                     </div>
                   </div>
                 </div>
@@ -405,31 +381,25 @@
                     <!-- IMAGE HEADER -->
                     <div class="mb-4 flex items-center justify-between ">
                         <div class="flex items-center gap-3">
-                            <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600"
-                            >
-                            <!-- Image Icon -->
+                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 class="h-5 w-5"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                stroke-width="2"
-                            >
+                                stroke-width="2" >
                                 <rect
-                                width="18"
-                                height="18"
-                                x="3"
-                                y="3"
-                                rx="2"
-                                />
+                                    width="18"
+                                    height="18"
+                                    x="3"
+                                    y="3"
+                                    rx="2" />
                                 <circle cx="8.5" cy="8.5" r="1.5" />
                                 <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M21 15l-5-5L5 21"
-                                />
+                                d="M21 15l-5-5L5 21" />
                             </svg>
                             </div>
 

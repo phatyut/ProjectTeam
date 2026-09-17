@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full bg-[#f6f8f7] px-2 pt-2  ">
+  <div class="h-full w-full bg-[#f6f8f7] px-2 pt-2 rounded-md ">
 
     <!-- ===================================================== -->
     <!-- TOP HEADER -->
@@ -25,14 +25,32 @@
 
 
       <!-- ADD PRODUCT -->
-      <button
-        @click="testalert"
-        class="group flex w-fit items-center gap-2 rounded-xl bg-gradient-to-br  from-[#006B2D] via-[#168C20] to-[#7FCB0A] px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-green-600">
-        <span class="text-lg transition duration-300 group-hover:rotate-90">
-          +
-        </span>
-        Add Product
-      </button>
+       <div class="flex gap-2">
+              <div class="relative group flex w-fit gap-2 rounded-xl bg-gradient-to-br 
+                        from-[#006B2D] via-[#168C20] to-[#7FCB0A] 
+                        px-5 py-2.5 text-sm font-bold text-white shadow-lg 
+                        transition hover:-translate-y-0.5 justify-center items-center 
+                        hover:bg-green-600">
+
+              <!-- Trigger -->
+                <button class="flex items-center gap-2"
+                        @click="web.setmore=true">
+                  Set More
+                </button>
+
+            
+            </div>
+
+
+         <button
+              @click="testalert"
+              class="group flex w-fit items-center gap-2 rounded-xl bg-gradient-to-br  from-[#006B2D] via-[#168C20] to-[#7FCB0A] px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-green-600">
+         <span class="text-lg transition duration-300 group-hover:rotate-90">
+             +
+          </span>
+             Add Product
+        </button>
+      </div>
     </div>
 
 
@@ -228,10 +246,13 @@
   </table>
 </div>
 
-
 <div class="fixed top-0 left-0 z-50 w-screen h-screen " v-if="web.viewAddProduct" >
   <AddProductToWeb/>
 </div>
+<div class="fixed top-0 left-0 z-50 w-screen h-screen " v-if="web.setmore" >
+  <Setmore/>
+</div>
+
 
   </div>
 </template>
@@ -240,9 +261,10 @@
 <script >
 import { web } from "../../sharing/Sharing.js";
 import AddProductToWeb from "./addproduct/AddProductToWeb.vue";
+import Setmore from "./setmore/Setmore.vue";
 import { computed, ref } from "vue";
 export default{
-  components:{AddProductToWeb},
+  components:{AddProductToWeb,Setmore},
   setup(){
 const search = ref("");
 const selectedCategory = ref("All");
@@ -258,202 +280,6 @@ const products = ref([
     costPrice: 850,
     salePrice: 999,
   },
-  {
-    id: 2,
-    name: "MacBook Pro M3",
-    category: "Laptop",
-    cpu: "M3",
-    ram: "16GB",
-    ssd: "512GB",
-    image:"https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=800",
-    costPrice: 1200,
-    salePrice: 1499,
-  },
-  
-  {
-    id: 2,
-
-    name: "MacBook Pro M3",
-
-    category: "Laptop",
-
-    cpu: "M3",
-
-    ram: "16GB",
-
-    ssd: "512GB",
-
-    image:
-      "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=800",
-
-    costPrice: 1200,
-
-    salePrice: 1499,
-  },
-
-  {
-    id: 3,
-
-    name: "Dell XPS 15",
-
-    category: "Laptop",
-
-    cpu: "i7",
-
-    ram: "32GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800",
-
-    costPrice: 900,
-
-    salePrice: 1199,
-  },
-
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-  {
-    id: 4,
-
-    name: "Lenovo Legion 5",
-
-    category: "Gaming",
-
-    cpu: "Ryzen 7",
-
-    ram: "16GB",
-
-    ssd: "1TB",
-
-    image:
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800",
-
-    costPrice: 780,
-
-    salePrice: 949,
-  },
-
-  
 ]);
 
 
