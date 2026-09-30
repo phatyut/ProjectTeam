@@ -1,5 +1,5 @@
 <template>
-    <div class="p-5 flex justify-center items-center gap-8 *:flex *:w-[25%] *:h-25 *:rounded-md *:justify-center *:items-center  ">
+    <div class="p-5 flex justify-center items-center *:bg-slate-50 gap-8 *:flex *:w-[25%] *:h-25 *:rounded-md *:justify-center *:items-center  ">
         <div class=" gap-5 flex justify-center items-center">
             <div><font-awesome-icon icon="fa-solid fa-microchip"  class="text-green-600 text-[40px]"/></div>
             <div >

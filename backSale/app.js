@@ -15,13 +15,10 @@ app.use(express.json())
 app.use("/uploads", express.static("public/uploads"));
 
 const ProductRouter = require("./routes/Product.routes");
-app.use("/api/products",ProductRouter);
-
-
-
-
-
 const WebRouter = require("./routes/Web.routes");
-app.use("/api/web",WebRouter)
+const SupplierRouter = require("./routes/suppliers.routes");
 
+app.use("/api/products",ProductRouter);
+app.use("/api/web",WebRouter);
+app.use("/api/suppliers", SupplierRouter);
 module.exports = app;

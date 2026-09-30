@@ -1,12 +1,12 @@
 <template>
-<div class="relative w-full h-screen  gap-2  flex flex-col bg-slate-200 p-1">
+<div class="relative w-full h-full   gap-2  flex flex-col  p-1">
 
-    <div class="h-17.5 rounded-sm bg-slate-50 ">
+    <div class="h-17.5 rounded-sm bg-slate-50 sticky top-1 z-20 ">
         <Account></Account>
     </div>
 
-    <div class="relative w-full h-full flex gap-2 ">
-        <div class="relative lg:w-[12%] h-full  ">
+    <div class=" w-full h-full flex gap-2  ">
+        <div class=" lg:w-[18%] h-full sticky top-20 ">
             <Menu> </Menu>
         </div>
 

@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full relative flex justify-center items-center h-full z-50">
+    <div class="w-full fixed left-0 top-0 flex justify-center items-center bg-white h-full z-50">
         <div class="bg-slate-100 p-8 gap-3  w-[50%] h-full flex flex-col">
             <div class="flex justify-between">
-                <div @click="testclick" class="relative hover:bg-slate-300 px-2 py-1.5 bg-slate-200 rounded-full">
+                <div @click="backFromProfile" class="relative hover:bg-slate-300 px-2 py-1.5 bg-slate-200 rounded-full">
                         <font-awesome-icon icon="fa-solid fa-arrow-left-long"  />
                     
                     </div>
@@ -46,7 +46,7 @@
     </div>
 </template>
 <script>
-import { profile } from '../../../sharing/Sharing';
+
 import { useRouter } from 'vue-router';
 export default{
     data(){
@@ -57,8 +57,8 @@ export default{
     },
     setup(){
         const router = useRouter()
-        const testclick =()=>{
-           profile.viewProfile=false;
+        const backFromProfile =()=>{
+          router.back()
           
         }
 
@@ -67,12 +67,12 @@ export default{
         }
 
         const testsignout =()=>{
-             profile.viewProfile=false;
+            
             router.replace("/login")
         }
         return{
-            profile,
-            testclick,
+          
+            backFromProfile,
             imageChange,
             testsignout
         }

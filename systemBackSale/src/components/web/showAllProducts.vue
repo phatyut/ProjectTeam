@@ -43,7 +43,7 @@
 
 
          <button
-              @click="testalert"
+              @click="AddProductToWebs"
               class="group flex w-fit items-center gap-2 rounded-xl bg-gradient-to-br  from-[#006B2D] via-[#168C20] to-[#7FCB0A] px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-green-600">
          <span class="text-lg transition duration-300 group-hover:rotate-90">
              +
@@ -383,8 +383,8 @@ const deleteProduct = (product) => {
 };
 
 
-const testalert =()=>{
-  alert(web.viewAddProduct = true)
+const AddProductToWebs =()=>{
+  web.viewAddProduct = true
  
 }
 
@@ -401,7 +401,7 @@ return{
   editProduct,
   deleteProduct,
   web,
-  testalert
+  AddProductToWebs
 
 
 }

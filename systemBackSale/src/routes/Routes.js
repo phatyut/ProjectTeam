@@ -14,6 +14,7 @@ import Repairs from '../components/Repairs/Repairs.vue';
 import Expenses from "../components/expenses/Expenses.vue";
 import Login from "../components/login/Login.vue";
 import Signup from "../components/signup/Signup.vue";
+import Profile from "../components/account/Profile/Profile.vue";
 
 const routes =[
     {path:"/dashboard",component:Dashboard},
@@ -31,6 +32,7 @@ const routes =[
     {path:"/repairs",component:Repairs},
     {path:"/expenses",component:Expenses},
     {path:"/signup",component:Signup},
+    {path:"/profile",component:Profile},
 
 ]
 

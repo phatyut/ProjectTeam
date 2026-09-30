@@ -16,31 +16,27 @@
         <div class="flex gap-5">
             <div class="flex justify-center items-center lg:size-8.75 hover:bg-gray-100 rounded-full"><font-awesome-icon icon="fa-regular fa-envelope" class="text-[20px]"/></div>
             <div class="flex justify-center items-center lg:size-8.75 hover:bg-gray-100 rounded-full"><font-awesome-icon icon="fa-regular fa-bell" class="text-[20px]" /></div>
-            <button class="hover:cursor-pointer" @click="testclickme">
-                <div class="lg:size-7.5 bg-green-900  rounded-full uppercase flex justify-center items-center text-white text-[16px]">y</div>
-            </button>
+            <router-link to="/profile">
+                <button class="hover:cursor-pointer" >
+                    <div class="lg:size-7.5 bg-green-900  rounded-full uppercase flex justify-center items-center text-white text-[16px]">y</div>
+                </button>
+            </router-link>
 
             
         </div>
-        <div    
-                class="z-10 right-0 top-0 w-full h-full fixed bg-slate-200/95 flex justify-center items-center"
-                v-if="profile.viewProfile">
-            <Profile/>
-        </div>
+      
     </div>
 </template>
 <script>
-import  {profile}  from '../../sharing/Sharing';
+
 import Profile from './Profile/Profile.vue';
 export default{
     components:{Profile},
     setup(){
-        const testclickme =()=>{
-           profile.viewProfile=true
-        }
+     
         return {
-            profile,
-            testclickme
+          
+           
         }
     }
 }

@@ -17,11 +17,25 @@ import {
       faTrashCan,
       faPlus,
       faMagnifyingGlass,
-  
+      faMinus,
       faAnglesRight,
       faRightToBracket,
       faArrowLeftLong,
       faCameraRotate,
+      faChartColumn,
+      faCartShopping,
+      faCity,
+      faCubes,
+      faCloudArrowUp,
+      faUsersGear,
+      faUsers,
+      faRecycle,
+      faFilePen,
+      faPrint,
+      faArrowsToEye,
+     
+      
+      
     //  testing
 
       faUpLong
@@ -46,7 +60,20 @@ library.add(
             faAnglesRight,
             faRightToBracket,
             faArrowLeftLong,
-            faCameraRotate
+            faCameraRotate,
+            faChartColumn,
+           faCartShopping,
+           faCity,
+           faCubes,
+           faCloudArrowUp,
+           faUsersGear,
+           faUsers,
+           faRecycle,
+           faFilePen,
+           faMinus,
+           faPrint,
+           faArrowsToEye
+           
           
         );
 

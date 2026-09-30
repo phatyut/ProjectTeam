@@ -7,27 +7,18 @@
           <div  class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-2xl ring-1 ring-white/20">
             <font-awesome-icon icon="fa-solid fa-plus" />
           </div>
-
           <div>
               <h2 class="text-xl font-bold">
                 Add New Product
               </h2>
-
               <p class="mt-1 text-sm text-green-100">
                 Add a new product to your inventory
               </p>
           </div>
-
         </div>
-
-
         <!-- Close -->
-        <button
-                type="button"
-                @click="$emit('cancel')"
-                class="flex h-9 w-9 items-center justify-center
-                      rounded-full bg-white/10 text-lg
-                      transition hover:bg-white/20 " >
+        <button type="button"  @click="$emit('cancel')"
+                class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-lg transition hover:bg-white/20 " >
                 ✕
         </button>
       </div>
@@ -315,9 +306,7 @@ export default {
     });
 
 
-    const res = await axios.post(
-      "http://localhost:2026/api/products",
-      formData,
+    const res = await axios.post("http://localhost:2026/api/products",formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",

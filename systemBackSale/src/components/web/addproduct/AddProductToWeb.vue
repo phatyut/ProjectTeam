@@ -36,7 +36,7 @@
         <!-- CLOSE -->
         <button
           type="button"
-          @click.prevent="closeAddProduct"
+          @click.prevent="CancelAddProduct"
           class="flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition hover:bg-white/15 hover:text-white"
         >
           <svg
@@ -279,6 +279,7 @@
                       class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
                     ></textarea>
                   </div>
+                  <div>tets</div>
                   </div>
               </section>
             </div>
@@ -424,7 +425,7 @@
                     <div v-if="imagePreview"
                         class="relative flex h-full w-full items-center justify-center p-5">
                         <img :src="imagePreview" alt="Product preview"
-                            class="w-full h-[200px] rounded-xl object-contain"/>
+                            class="w-full h-50 rounded-xl object-contain"/>
 
                         <!-- REMOVE -->
                         <button
@@ -533,9 +534,7 @@
         </div>
 
         <!-- ================= FOOTER ================= -->
-        <div
-          class="flex shrink-0 items-center justify-between border-t border-slate-100 bg-white px-8 py-4"
-        >
+        <div class="flex shrink-0 items-center justify-between border-t border-slate-100 bg-white px-8 py-4">
           <p class="text-xs text-slate-400">
             Fields marked with
             <span class="font-bold text-red-500">*</span>
@@ -543,10 +542,19 @@
           </p>
 
           <div class="flex items-center gap-3">
-            <!-- CANCEL -->
             <button
               type="button"
-              @click="closeModal"
+              @click="$emit('closeTest')"
+              class="rounded-xl border border-slate-200 bg-black px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <!-- CANCEL -->
+
+
+            <button
+              type="button"
+              @click="CancelAddProduct"
               class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
             >
               Cancel
@@ -572,7 +580,7 @@
                 />
               </svg>
 
-              Add Product
+              Add/Host
             </button>
           </div>
         </div>
@@ -587,7 +595,7 @@ import { reactive, ref, onUnmounted } from "vue";
 
 export default {
   emits: ["close", "add"],
-  setup() {
+  setup(prop,{emit}) {
     const form = reactive({
       name: "",
       description: "",
@@ -672,8 +680,8 @@ export default {
         return;
       }
     };
-    const closeAddProduct = ()=>{
-      alert(web.viewAddProduct=false)
+    const CancelAddProduct = ()=>{
+     web.viewAddProduct=false
     }
 
     /* ================= CLEANUP ================= */
@@ -693,7 +701,7 @@ export default {
       closeModal,
       handleSubmit,
       web,
-      closeAddProduct
+      CancelAddProduct
     };
   },
 };

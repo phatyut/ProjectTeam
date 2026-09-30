@@ -6,6 +6,10 @@ import Support from "../components/support/Support.vue";
 import Contact from "../components/contact/Contact.vue";
 import About from "../components/about/About.vue";
 
+// testing
+import signup from "../components/register/signup.vue";
+import Login from "../components/register/login.vue";
+
 const routes =[
     {path:"/",redirect:"/home"},
     {path:"/home",component:Homepage},
@@ -14,6 +18,9 @@ const routes =[
     {path:"/support",component:Support},
     {path:"/contact",component:Contact},
     {path:"/about",component:About},
+
+    {path:"/signup",component:signup},
+    {path:"/login",component:Login},
 ]
 
 const router = createRouter({

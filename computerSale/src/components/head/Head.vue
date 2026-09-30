@@ -27,19 +27,24 @@
             </button>
         </div>
     </div>
-    <div class="fixed top-0 right-0 w-75 h-full bg-white shadow-2xl z-30 rounded-l-2xl" v-if="account.viewaccount">
+    <div class="fixed top-0 right-0 w-75 h-full bg-black shadow-2xl z-30 rounded-l-2xl" v-if="account.viewaccount">
         <Account></Account>
+    </div>
+    <div class="absolute top-0 right-10 w-75 h-full bg-white shadow-2xl z-30 rounded-l-2xl" v-if="StoreCard.showCard">
+        <StoreCards></StoreCards>
     </div>
 </div>
 </template>
 <script>
-import { account } from '../../sharing/Sharing.js';
+import { account,StoreCard } from '../../sharing/Sharing.js';
 import Account from './account/Account.vue';
+import StoreCards from './StoreCards/StoreCards.vue';
 export default{
-    components:{Account},
+    components:{Account,StoreCards},
     setup(){
         return {
-            account
+            account,
+            StoreCard
         }
     }
 }

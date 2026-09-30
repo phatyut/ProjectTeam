@@ -17,6 +17,6 @@ export const test = reactive({
 });
 
 
-export const profile =reactive({
-    viewProfile:false
-})
+// export const profile =reactive({
+//     viewProfile:false
+// })

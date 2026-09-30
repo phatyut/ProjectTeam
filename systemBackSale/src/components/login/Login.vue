@@ -1,5 +1,5 @@
 <template>
-    <div class=" fixed top-0 left-0 w-full h-full bg-slate-100  ">
+    <div class=" fixed top-0 left-0 w-full h-full bg-slate-100 z-30 ">
           <div class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
 
     <!-- Login Card -->
@@ -67,13 +67,13 @@
               Password
             </label>
 
-            <a
+            <!-- <a
               href="#"
               class="text-xs font-semibold text-green-700
                      hover:text-green-800"
             >
               Forgot password?
-            </a>
+            </a> -->
           </div>
 
           <div class="relative">
@@ -129,7 +129,7 @@
         </button>
 
         <!-- Divider -->
-        <div class="flex items-center gap-4 my-7">
+        <!-- <div class="flex items-center gap-4 my-7">
           <div class="h-px bg-slate-200 flex-1"></div>
 
           <span class="text-xs text-slate-400">
@@ -137,10 +137,10 @@
           </span>
 
           <div class="h-px bg-slate-200 flex-1"></div>
-        </div>
+        </div> -->
 
         <!-- Google -->
-        <button
+        <!-- <button
           type="button"
           class="w-full h-12 rounded-xl
                  border border-slate-200
@@ -152,10 +152,10 @@
         >
           <i class="fa-brands fa-google mr-2"></i>
           Continue with Google
-        </button>
+        </button> -->
 
         <!-- Register -->
-        <p class="text-center text-sm text-slate-500 mt-7">
+        <!-- <p class="text-center text-sm text-slate-500 mt-7">
           Don't have an account?
 
           <a
@@ -165,7 +165,7 @@
           >
             Create account
           </a>
-        </p>
+        </p> -->
 
       </form>
     </div>
