@@ -1,16 +1,15 @@
 const express = require("express");
-const WebRouter  = express.Router();
-const {getAll,create,getById,remove,updateData} = require("../controller/web/web.controller")
-
-     WebRouter
-               .route("/")
-               .get(getAll)
-               .post(create);
-     WebRouter
-               .route("/:id")
-               .get(getById)
-               .delete(remove)
-               .put(updateData)
-
-
-     module.exports  = WebRouter
+const router = express.Router();
+const WebController = require("../controller/web/web.controller");
+const { handleSupplierUpload } = require("../middleware/uploadWeb.middleware"); // your upload file above
+ 
+router.route("/").get(WebController.getAll).post(handleSupplierUpload, WebController.create);
+ 
+router
+  .route("/:id")
+  .get(WebController.getOne)
+  .put(handleSupplierUpload, WebController.update)
+  .delete(WebController.remove);
+ 
+module.exports = router;
+ 

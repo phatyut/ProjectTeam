@@ -5,13 +5,14 @@ import Deals from "../components/deals/Deals.vue";
 import Support from "../components/support/Support.vue";
 import Contact from "../components/contact/Contact.vue";
 import About from "../components/about/About.vue";
-
-// testing
 import signup from "../components/register/signup.vue";
 import Login from "../components/register/login.vue";
 
+// testing
+import Testpage from "../components/test/Testpage.vue";
+
 const routes =[
-    {path:"/",redirect:"/home"},
+    {path:"/",redirect:"/shop"},
     {path:"/home",component:Homepage},
     {path:"/shop",component:Shop},
     {path:"/deals",component:Deals},
@@ -21,6 +22,7 @@ const routes =[
 
     {path:"/signup",component:signup},
     {path:"/login",component:Login},
+    {path:"/test",component:Testpage},
 ]
 
 const router = createRouter({

@@ -1,23 +1,19 @@
 <template>
-<div class="relative w-full h-full   gap-2  flex flex-col  p-1">
-
-    <div class="h-17.5 rounded-sm bg-slate-50 sticky top-1 z-20 ">
-        <Account></Account>
+  <div class="relative w-full h-full gap-2 flex flex-col p-1">
+    <div class="h-17.5 rounded-sm bg-slate-50 sticky top-1 z-20">
+      <Account></Account>
     </div>
 
-    <div class=" w-full h-full flex gap-2  ">
-        <div class=" lg:w-[18%] h-full sticky top-20 ">
-            <Menu> </Menu>
-        </div>
+    <div class="w-full h-full flex gap-2">
+      <div class="lg:w-[18%] h-full sticky top-20">
+        <Menu> </Menu>
+      </div>
 
-        <div class="relative w-full h-full flex flex-col  rounded-md">           
-                <router-view></router-view>
-        </div>
+      <div class="relative w-full h-full flex flex-col rounded-md">
+        <router-view></router-view>
+      </div>
     </div>
-
-   
-
-</div>
+  </div>
 </template>
 
 <script>
@@ -25,30 +21,79 @@ import axios from "axios";
 import { ref, provide, onMounted } from "vue";
 import { pagelogin } from "./sharing/Sharing";
 
-
 export default {
-
-
   setup() {
-
     const productCount = ref(0);
+    const usersCount = ref(0);
+    const suppliersCount = ref(0);
+    const webCount =ref(0)
+
+    provide("productCount", productCount);
+    provide("usersCount", usersCount);
+    provide("suppliersCount", suppliersCount);
+    provide("webCount",webCount)
+
+
 
     const getProductCount = async () => {
       try {
-         const res = await axios.get("http://localhost:2026/api/products");
-               productCount.value = res.data.data.length;
-          } catch (error) {
-            console.error( "Get product count error:", error);
-       }
+        const res = await axios.get("http://localhost:2026/api/products");
+        productCount.value = res.data.data.length || 0;
+      } catch (error) {
+        console.error("Get product count error:", error);
+      }
     };
 
-    provide("productCount", productCount);
-    onMounted(getProductCount);
-      return {
-        productCount,
-        pagelogin
-      };
-  }
 
+    const getUsersCount = async () => {
+      try {
+        const res = await axios.get("http://localhost:2026/api/employees");
+
+        usersCount.value = res.data.data?.length || 0;
+      } catch (error) {
+        console.error("Get employee count error:", error);
+        usersCount.value = 0;
+      }
+    };
+
+    
+    const getSuppliersCount = async () => {
+      try {
+        const res = await axios.get("http://localhost:2026/api/suppliers");
+
+        suppliersCount.value = res.data.data?.length || 0;
+      } catch (error) {
+        console.error("Get supplier count error:", error);
+        suppliersCount.value = 0;
+      }
+    };
+
+
+    const getwebCount = async ()=>{
+      try {
+        const res = await axios.get("http://localhost:2026/api/web");
+        webCount.value = res.data.data?.length || 0;
+      } catch (error) {
+        console.error("Can't Count Web error",error);
+        webCount.value = 0;
+      }
+    }
+
+    onMounted(async () => {
+      await Promise.all([
+        getProductCount(),
+        getUsersCount(),
+        getSuppliersCount(),
+        getwebCount()
+      ]);
+    });
+    return {
+      usersCount,
+      productCount,
+      suppliersCount,
+      webCount,
+      pagelogin,
+    };
+  },
 };
 </script>

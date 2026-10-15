@@ -15,7 +15,7 @@
       <!-- Customer Support -->
       <div>
         <h3 class="text-black font-semibold mb-4">Customer Support</h3>
-        <ul class="space-y-2">
+        <ul class="space-y-2 *:hover:underline *:transition-all *:duration-500">
           <li><a href="#">FAQs</a></li>
           <li><a href="#">Warranty & Returns</a></li>
           <li><a href="#">Contact Us</a></li>
@@ -25,7 +25,7 @@
       <!-- Quick Links -->
       <div>
         <h3 class="text-black font-semibold mb-4">Quick Links</h3>
-        <ul class="space-y-2">
+        <ul class="space-y-2 *:hover:underline *:transition-all *:duration-500">
           <li><a href="#">Laptops</a></li>
           <li><a href="#">Desktops</a></li>
           <li><a href="#">Components</a></li>
@@ -37,7 +37,7 @@
       <!-- Policies -->
       <div>
         <h3 class="text-black font-semibold mb-4">Policies</h3>
-        <ul class="space-y-2">
+        <ul class="space-y-2 *:hover:underline *:transition-all *:duration-500  ">
           <li><a href="#">Privacy Policy</a></li>
           <li><a href="#">Terms & Conditions</a></li>
           <li><a href="#">Shipping Policy</a></li>
@@ -47,7 +47,7 @@
       <!-- Payments -->
       <div>
         <h3 class="text-black font-semibold mb-4">Payments</h3>
-        <div class="flex space-x-4">
+        <div class="flex space-x-4 *:hover:cursor-pointer *:hover:scale-110 *:transition-all *:duration-300">
           <!-- Visa -->
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32" class="h-8 w-auto">
             <rect width="48" height="32" fill="#1a1f71"/>

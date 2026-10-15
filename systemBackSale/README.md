@@ -21,3 +21,12 @@ main BG  = white (FFFFFF)
 
 
 <!-- start work with setmore button with website main -->
+
+
+
+
+
+<!-- postion stores -->
+<!-- 1, account  store account -->
+<!-- 2, dashboard store data only important   -->
+<!-- 3,expenses store -->

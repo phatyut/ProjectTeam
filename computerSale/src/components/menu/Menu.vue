@@ -63,6 +63,14 @@
         <font-awesome-icon icon="fa-solid fa-id-card" />
         About
       </router-link>
+      <router-link 
+        to="/test"
+        class="cursor-pointer transition-all text-[15px] flex gap-1 font-bold justify-center items-center text-green-600 hover:text-white hover:bg-green-600"
+        active-class="bg-green-600 text-white"
+      >
+        <font-awesome-icon icon="fa-solid fa-id-card" />
+        Test
+      </router-link>
 
     </div>
 

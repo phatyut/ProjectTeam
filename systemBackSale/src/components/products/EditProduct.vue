@@ -8,7 +8,7 @@
       class="w-[80%] min-w-3xl h-[92vh]  rounded-2xl bg-slate-50 shadow-2xl  p-2" >
 
       <!-- ================= HEADER ================= -->
-      <div class="sticky top-0 z-20 flex items-center justify-between rounded-2xl
+      <div class="sticky top-0  flex items-center justify-between rounded-2xl
                bg-gradient-to-r from-green-700 via-green-800 to-green-700 px-6 py-5 text-white">
 
         <div class="flex items-center gap-4">

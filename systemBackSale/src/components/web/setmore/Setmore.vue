@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full h-screen overflow-y-scroll  fixed space-y-5 top-0 right-0 bg-white p-4">
+    <div class="w-full h-screen overflow-y-scroll z-40 fixed space-y-5 top-0 right-0 bg-white p-4">
         <button
           type="button"
-          @click.prevent="web.setmore=false"
+          @click.prevent="router.back()"
           class="flex h-10 w-10 items-center justify-center  rounded-full text-green-800 bg-gray-50 transition hover:bg-gray-200 hover:text-green-700" >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -35,34 +35,25 @@
           </KeepAlive>
         </div>
 
-       
-      <!-- <div class="flex justify-end items-center px-8">
-        <div class="flex gap-4">
-          <button class="bg-slate-100 px-8 py-3 rounded-xl font-bold text-gray-700" >Cancel</button>
-          <button class="bg-green-600 px-8 py-3 rounded-xl font-bold text-white">Save</button>
-        </div>
-      </div> -->
-
-
     </div>
 </template>
 
 <script>
+import {useRouter} from "vue-router"
 import { ref } from 'vue';
-import { web } from '../../../sharing/Sharing';
 import SetWebsite from './setWebsite/SetWebsite.vue';
 import SetType from './setType/SetType.vue';
 export default{
   components:{SetType,SetWebsite},
     setup(){
-      
+      const router = useRouter()
       const ChanegSetMore = ref('SetType');
       const clickChangeSetmore =(newArg)=>{
           ChanegSetMore.value =newArg
       }
 
         return {
-            web,
+            router,
             ChanegSetMore,
             clickChangeSetmore,
             

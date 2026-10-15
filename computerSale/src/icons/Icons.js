@@ -17,6 +17,7 @@ import {
         faHouse,
         faBell
         } from '@fortawesome/free-solid-svg-icons';
+import { faRebel } from '@fortawesome/free-brands-svg-icons'
 import {faTruck,} from '@fortawesome/free-regular-svg-icons'
 import {} from '@fortawesome/free-brands-svg-icons'
 
@@ -37,7 +38,8 @@ library.add(
                 faTags,
                 faHeadset,
                 faIdCard,
-                faBell
+                faBell,
+                faRebel
             );
 
 

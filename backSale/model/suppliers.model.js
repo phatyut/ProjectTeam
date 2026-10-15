@@ -18,8 +18,11 @@ const SuppliersSchema = new mongoose.Schema({
         type:String,
         unique:true,
         required:[true,"Contact is required."]
+    },
+    image:{
+        type:String,
+        default:""
     }
-
 },{timestamps:true})
 
 const SuppliersModel = mongoose.model("SupplersModel",SuppliersSchema);

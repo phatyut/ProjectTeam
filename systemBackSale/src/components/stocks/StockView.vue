@@ -1,4 +1,4 @@
-```vue
+
 <template>
   <div class="min-h-screen bg-slate-100 rounded-md p-6">
 
@@ -14,15 +14,28 @@
           Monitor your products and stock levels
         </p>
       </div>
+      <div class="flex gap-2">
 
-      <button
-        class="flex items-center gap-2 rounded-xl bg-green-700
-               px-5 py-3 font-semibold text-white shadow-lg
-               shadow-green-700/20 transition hover:bg-green-800"
-      >
-        <font-awesome-icon icon="fa-solid fa-plus" />
-        Add Stock
-      </button>
+        <button
+          @click="router.replace('/stocks/setoptionStock')"
+          class="flex items-center gap-2 rounded-xl bg-green-700
+                 px-5 py-3 font-semibold text-white shadow-lg
+                 shadow-green-700/20 transition hover:bg-green-800"
+        >
+          <font-awesome-icon icon="fa-solid fa-plus" />
+          Set Option
+        </button>
+        <button
+          @click="router.replace('/stocks/AddStocks')"
+          class="flex items-center gap-2 rounded-xl bg-green-700
+                 px-5 py-3 font-semibold text-white shadow-lg
+                 shadow-green-700/20 transition hover:bg-green-800"
+        >
+          <font-awesome-icon icon="fa-solid fa-plus" />
+          Add Stock
+        </button>
+      </div>
+
 
     </div>
 
@@ -212,9 +225,12 @@
               </th>
 
               <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">
-                SKU
+                batchId
               </th>
 
+              <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">
+                Location
+              </th>
               <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">
                 Category
               </th>
@@ -275,6 +291,9 @@
               </td>
 
 
+              <td class="px-5 py-4 text-sm font-medium text-slate-600">
+                LAP-001
+              </td>
               <td class="px-5 py-4 text-sm font-medium text-slate-600">
                 LAP-001
               </td>
@@ -340,195 +359,10 @@
 
 
             <!-- Product 2 -->
-            <tr class="border-b border-slate-100 transition hover:bg-slate-50">
-
-              <td class="px-5 py-4">
-
-                <div class="flex items-center gap-3">
-
-                  <div
-                    class="flex h-12 w-12 items-center justify-center
-                           rounded-xl bg-slate-100"
-                  >
-                    <font-awesome-icon
-                      icon="fa-solid fa-desktop"
-                      class="text-xl text-green-700"
-                    />
-                  </div>
-
-                  <div>
-                    <p class="font-semibold text-slate-800">
-                      Dell OptiPlex 7010
-                    </p>
-
-                    <p class="text-xs text-slate-400">
-                      Business Desktop
-                    </p>
-                  </div>
-
-                </div>
-
-              </td>
-
-
-              <td class="px-5 py-4 text-sm font-medium text-slate-600">
-                DES-002
-              </td>
-
-
-              <td class="px-5 py-4">
-                <span
-                  class="rounded-lg bg-blue-50 px-3 py-1.5
-                         text-xs font-semibold text-blue-700"
-                >
-                  Desktop
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4 text-right font-semibold text-slate-700">
-                $899
-              </td>
-
-
-              <td class="px-5 py-4 text-center">
-                <span class="font-bold text-slate-800">
-                  6
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4 text-center">
-                <span
-                  class="rounded-full bg-yellow-100 px-3 py-1.5
-                         text-xs font-semibold text-yellow-700"
-                >
-                  Low Stock
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4">
-
-                <div class="flex justify-center gap-2">
-
-                  <button
-                    class="flex h-9 w-9 items-center justify-center
-                           rounded-lg bg-green-50 text-green-700
-                           hover:bg-green-100"
-                  >
-                    <font-awesome-icon icon="fa-solid fa-eye" />
-                  </button>
-
-                  <button
-                    class="flex h-9 w-9 items-center justify-center
-                           rounded-lg bg-blue-50 text-blue-600
-                           hover:bg-blue-100"
-                  >
-                    <font-awesome-icon icon="fa-solid fa-pen" />
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
-
+         
 
             <!-- Product 3 -->
-            <tr class="border-b border-slate-100 transition hover:bg-slate-50">
-
-              <td class="px-5 py-4">
-
-                <div class="flex items-center gap-3">
-
-                  <div
-                    class="flex h-12 w-12 items-center justify-center
-                           rounded-xl bg-slate-100"
-                  >
-                    <font-awesome-icon
-                      icon="fa-solid fa-display"
-                      class="text-xl text-green-700"
-                    />
-                  </div>
-
-                  <div>
-                    <p class="font-semibold text-slate-800">
-                      LG UltraGear 27"
-                    </p>
-
-                    <p class="text-xs text-slate-400">
-                      Gaming Monitor
-                    </p>
-                  </div>
-
-                </div>
-
-              </td>
-
-
-              <td class="px-5 py-4 text-sm font-medium text-slate-600">
-                MON-003
-              </td>
-
-
-              <td class="px-5 py-4">
-                <span
-                  class="rounded-lg bg-purple-50 px-3 py-1.5
-                         text-xs font-semibold text-purple-700"
-                >
-                  Monitor
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4 text-right font-semibold text-slate-700">
-                $399
-              </td>
-
-
-              <td class="px-5 py-4 text-center">
-                <span class="font-bold text-red-600">
-                  0
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4 text-center">
-                <span
-                  class="rounded-full bg-red-100 px-3 py-1.5
-                         text-xs font-semibold text-red-700"
-                >
-                  Out of Stock
-                </span>
-              </td>
-
-
-              <td class="px-5 py-4">
-
-                <div class="flex justify-center gap-2">
-
-                  <button
-                    class="flex h-9 w-9 items-center justify-center
-                           rounded-lg bg-green-50 text-green-700
-                           hover:bg-green-100"
-                  >
-                    <font-awesome-icon icon="fa-solid fa-eye" />
-                  </button>
-
-                  <button
-                    class="flex h-9 w-9 items-center justify-center
-                           rounded-lg bg-blue-50 text-blue-600
-                           hover:bg-blue-100"
-                  >
-                    <font-awesome-icon icon="fa-solid fa-pen" />
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
+            
 
           </tbody>
 
@@ -590,4 +424,16 @@
 
   </div>
 </template>
+<script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+export default{
+  setup(){
+    const router = useRouter()
+    return{
+      router
+    }
+}
+}
+</script>
 ```

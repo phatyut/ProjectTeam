@@ -5,7 +5,8 @@ import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 
 import { 
             faBell,
-            faEnvelope
+            faEnvelope,
+            faCircleQuestion
         } from '@fortawesome/free-regular-svg-icons'
 
 
@@ -33,11 +34,35 @@ import {
       faFilePen,
       faPrint,
       faArrowsToEye,
+      faGear,
+      faGlobe,
+      faPersonDress,
+      faPerson,
+     faIdCard,
+     faUserPen,
+     faShieldHalved,
+     faUserTie,
+     faBriefcase,
+     faPhone,
+     faCalendarDays,
+     faMoneyBill1Wave,
+     faEnvelope as faEnvelopeSolid,
+     faUnlockKeyhole,
+     faUserPlus,
+     faArrowLeft,
+     faTruck,
+     faBoxesStacked,
+     faCircleCheck,
+      faTriangleExclamation,
+      faCircleXmark,
+      faEye,
+      faPen,
+     
      
       
       
     //  testing
-
+      faFlask,
       faUpLong
     
     } from "@fortawesome/free-solid-svg-icons";
@@ -72,9 +97,32 @@ library.add(
            faFilePen,
            faMinus,
            faPrint,
-           faArrowsToEye
-           
-          
+           faArrowsToEye,
+           faFlask,
+           faGear,
+           faCircleQuestion,
+           faGlobe,
+           faPersonDress ,
+           faPerson,
+           faIdCard,
+           faUserPen,
+           faShieldHalved,
+           faUserTie,
+           faBriefcase,
+           faPhone,        
+           faCalendarDays,
+           faMoneyBill1Wave,
+           faEnvelopeSolid,
+           faUnlockKeyhole,
+           faUserPlus,
+           faArrowLeft,
+           faTruck,
+           faBoxesStacked,
+           faCircleCheck,
+           faTriangleExclamation,
+           faCircleXmark,
+           faEye,
+           faPen
         );
 
 export {FontAwesomeIcon}

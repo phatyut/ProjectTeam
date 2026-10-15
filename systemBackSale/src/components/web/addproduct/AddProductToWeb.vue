@@ -1,588 +1,322 @@
-
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-100 px-10 py-2 backdrop-blur-sm">
-    <div class="relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
-      <!-- ================= HEADER ================= -->
-      <div class="flex shrink-0 items-center justify-between bg-green-600 px-8 py-5">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
-            <!-- Plus Icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </div>
+  <div class="fixed inset-0 z-50 overflow-y-auto bg-linear-to-br from-emerald-600 via-green-800 to-teal-950 text-white">
+    <!-- soft colour blobs behind the glass -->
+    <div class="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-lime-300/30 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-32 right-0 h-112 w-md rounded-full bg-teal-300/25 blur-3xl"></div>
+    <div class="pointer-events-none fixed left-1/3 top-1/2 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl"></div>
 
-          <div>
-            <h2 class="text-xl font-black tracking-tight text-white">
-              Add New Product
-            </h2>
-            <p class="text-sm text-green-100">
-              Add a new computer product to your inventory
-            </p>
-          </div>
-        </div>
-
-        <!-- CLOSE -->
+    <div class="relative mx-auto w-full max-w-6xl space-y-6 p-4 sm:p-8">
+      <!-- header -->
+      <header class="flex items-center gap-4">
         <button
           type="button"
-          @click.prevent="CancelAddProduct"
-          class="flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition hover:bg-white/15 hover:text-white"
+          @click="close"
+          aria-label="Back to products"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/25 bg-white/10 text-white backdrop-blur-xl transition hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-white"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <i class="fa-solid fa-arrow-left"></i>
         </button>
-      </div>
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">{{ isEdit ? 'Edit product' : 'Add product to web' }}</h1>
+          <p class="text-sm text-white/70">Fill in the details. The card on the right shows how customers will see it.</p>
+        </div>
+      </header>
 
-      <!-- ================= FORM ================= -->
-      <form
-        @submit.prevent="handleSubmit"
-        class="flex min-h-0 flex-1 flex-col"
-      >
-        <!-- ================= CONTENT ================= -->
-        <div class="min-h-0 flex-1 px-8 py-5  overflow-y-scroll">
-          <div class="grid h-full grid-cols-[60%_40%] gap-8">
+      <form @submit.prevent="handleSubmit" novalidate class="space-y-6">
+        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
+          <!-- ================= LEFT: FORM ================= -->
+          <div class="space-y-6">
+            <!-- BASICS -->
+            <section :class="glass">
+              <h2 :class="sectionTitle">
+                <span :class="iconBox"><i class="fa-solid fa-box"></i></span>
+                Basics
+              </h2>
 
-            <!-- ================================================= -->
-            <!-- LEFT SIDE - 60% -->
-            <!-- ================================================= -->
-            <div class="min-w-0">
-
-              <!-- ================= PRODUCT INFORMATION ================= -->
-              <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="mb-4 flex items-center gap-3">
-                  <div  class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
-                    <!-- Product Icon -->
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                      />
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-slate-800">
-                      Product Information
-                    </h3>
-                    <p class="text-xs text-slate-400">
-                      Basic product details
-                    </p>
-                  </div>
+              <div class="space-y-4">
+                <div>
+                  <label :class="label" for="title">Title <span class="text-lime-300">*</span></label>
+                  <input
+                    id="title"
+                    v-model="form.title"
+                    type="text"
+                    placeholder="e.g. ASUS ROG Strix G16"
+                    :class="[input, errors.title && 'border-red-300 bg-red-400/10']"
+                    @input="errors.title = ''"
+                  />
+                  <p v-if="errors.title" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.title }}</p>
                 </div>
 
-                <div class="space-y-4">
-                  <!-- NAME -->
+                <div class="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
-                      Product Name
-                      <span class="text-red-500">*</span>
-                    </label>
-
+                    <label :class="label" for="brand">Brand <span class="text-lime-300">*</span></label>
                     <input
-                      v-model="form.name"
+                      id="brand"
+                      v-model="form.brand"
                       type="text"
-                      placeholder="e.g. ASUS ROG Strix G16"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                      placeholder="ASUS"
+                      :class="[input, errors.brand && 'border-red-300 bg-red-400/10']"
+                      @input="errors.brand = ''"
                     />
+                    <p v-if="errors.brand" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.brand }}</p>
                   </div>
                   <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
-                      Product Model
-                      <span class="text-red-500">*</span>
-                    </label>
-
+                    <label :class="label" for="model">Model <span class="text-lime-300">*</span></label>
                     <input
-                      v-model="form.name"
+                      id="model"
+                      v-model="form.model"
                       type="text"
-                      placeholder="e.g. ASUS ROG Strix G16"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                      placeholder="G614JV"
+                      :class="[input, errors.model && 'border-red-300 bg-red-400/10']"
+                      @input="errors.model = ''"
                     />
+                    <p v-if="errors.model" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.model }}</p>
                   </div>
+                </div>
 
-                  <!-- DESCRIPTION -->
+                <div>
+                  <label :class="label" for="description">Description</label>
+                  <textarea
+                    id="description"
+                    v-model="form.description"
+                    rows="3"
+                    placeholder="A short summary for the product page"
+                    :class="[input, 'resize-none']"
+                  ></textarea>
+                </div>
+              </div>
+            </section>
 
-                 
+            <!-- SPECS -->
+            <section :class="glass">
+              <h2 :class="sectionTitle">
+                <span :class="iconBox"><i class="fa-solid fa-microchip"></i></span>
+                Specifications
+              </h2>
 
-                  <!-- CATEGORY / BRAND / MODEL -->
-                  <div class="grid grid-cols-3 gap-4">
-                    <!-- CATEGORY -->
-                    <div>
-                      <label
-                        class="mb-1.5 block text-sm font-semibold text-slate-700"
-                      >
-                        Category
-                      </label>
+              <div class="space-y-4">
+                <div>
+                  <label :class="label" for="cpu">Processor <span class="text-lime-300">*</span></label>
+                  <input
+                    id="cpu"
+                    v-model="form.cpu"
+                    type="text"
+                    placeholder="Core i7-13650HX"
+                    :class="[input, errors.cpu && 'border-red-300 bg-red-400/10']"
+                    @input="errors.cpu = ''"
+                  />
+                  <p v-if="errors.cpu" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.cpu }}</p>
+                </div>
 
-                      <select
-                        v-model="form.category"
-                        class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                      >
-                        <option value="Gaming">Gaming</option>
-                        <option value="Laptop">Laptop</option>
-                        <option value="Desktop">Desktop</option>
-                        <option value="Workstation">Workstation</option>
-                        <option value="Accessories">Accessories</option>
-                      </select>
-                    </div>
+                <div id="ram">
+                  <span :class="label">Memory <span class="text-lime-300">*</span></span>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      v-for="r in ramList"
+                      :key="r"
+                      type="button"
+                      @click="form.ram = form.ram === r ? '' : r; errors.ram = ''"
+                      :aria-pressed="form.ram === r"
+                      :class="chip(form.ram === r)"
+                    >
+                      {{ r.replace('GB', ' GB') }}
+                    </button>
+                  </div>
+                  <p v-if="errors.ram" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.ram }}</p>
+                </div>
 
-                    <!-- BRAND -->
-                    <div>
-                      <label
-                        class="mb-1.5 block text-sm font-semibold text-slate-700"
-                      >
-                        Brand
-                      </label>
-
+                <div>
+                  <label :class="label" for="ssd">Storage (SSD) <span class="text-lime-300">*</span></label>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <button
+                      v-for="s in ssdOptions"
+                      :key="s.gb"
+                      type="button"
+                      @click="form.ssd = s.gb; errors.ssd = ''"
+                      :aria-pressed="form.ssd === s.gb"
+                      :class="chip(form.ssd === s.gb)"
+                    >
+                      {{ s.text }}
+                    </button>
+                    <div class="relative w-36">
                       <input
-                        v-model="form.brand"
-                        type="text"
-                        placeholder="ASUS"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                        id="ssd"
+                        v-model.number="form.ssd"
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="Other"
+                        :class="[input, 'pr-10', errors.ssd && 'border-red-300 bg-red-400/10']"
+                        @input="errors.ssd = ''"
                       />
-                    </div>
-
-                    <!-- MODEL -->
-                    <div>
-                      <label
-                        class="mb-1.5 block text-sm font-semibold text-slate-700"
-                      >
-                        Model
-                      </label>
-
-                      <input
-                        v-model="form.model"
-                        type="text"
-                        placeholder="G16"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                      />
+                      <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/60">GB</span>
                     </div>
                   </div>
+                  <p v-if="errors.ssd" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.ssd }}</p>
+                  <p v-else class="mt-1.5 text-xs text-white/50">Size in GB. 1 TB is 1024.</p>
                 </div>
-              </section>
+              </div>
+            </section>
 
-              <!-- ================= SPECIFICATIONS ================= -->
-              <section class="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="mb-4 flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
-                    <!-- CPU Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <rect width="16" height="16" x="4" y="4" rx="2"/>
-                      <rect width="6" height="6" x="9" y="9" rx="1"/>
-                      <path stroke-linecap="round" d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3" />
-                    </svg>
-                  </div>
+            <!-- PRICING -->
+            <section :class="glass">
+              <h2 :class="sectionTitle">
+                <span :class="iconBox"><i class="fa-solid fa-tag"></i></span>
+                Price and deals
+              </h2>
 
-                  <div>
-                    <h3 class="font-bold text-slate-800">
-                      Specifications
-                    </h3>
-                    <p class="text-xs text-slate-400">
-                      Hardware specifications
-                    </p>
-                  </div>
-                </div>
-
-
-                <div class="flex flex-col gap-3">
-
-             
-                <div class="grid grid-cols-3 gap-4">
-                  <!-- CPU -->
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                      CPU
-                    </label>
-
-                    <input v-model="form.cpu" type="text" placeholder="Core i7"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
-                  </div>
-
-                  <!-- RAM -->
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                      RAM
-                    </label>
-
-                    <select v-model="form.ram"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10">
-                      <option value="">Select RAM</option>
-                      <option value="8GB">8 GB</option>
-                      <option value="16GB">16 GB</option>
-                      <option value="32GB">32 GB</option>
-                      <option value="64GB">64 GB</option>
-                    </select>
-                  </div>
-
-                  <!-- SSD -->
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                      Storage
-                    </label>
-
-                    <select v-model="form.ssd"
-                      class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10" >
-                      <option value="">Select Storage</option>
-                      <option value="256GB">256 GB SSD</option>
-                      <option value="512GB">512 GB SSD</option>
-                      <option value="1TB">1 TB SSD</option>
-                      <option value="2TB">2 TB SSD</option>
-                    </select>
-                  </div>
-                </div>
-                 <div>
-                    <label
-                      class="mb-1.5 block text-sm font-semibold text-slate-700"
-                    >
-                      Description
-                    </label>
-
-                    <textarea
-                      v-model="form.description"
-                      rows="2"
-                      placeholder="Enter product description..."
-                      class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
-                    ></textarea>
-                  </div>
-                  <div>tets</div>
-                  </div>
-              </section>
-            </div>
-
-            <!-- ================================================= -->
-            <!-- RIGHT SIDE - 40% -->
-            <!-- ================================================= -->
-             <div class="flex flex-col gap-4">
-                  <section class=" rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="mb-4 flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
-                    <!-- Dollar Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="9" />
-                      <path stroke-linecap="round"
-                        d="M12 7v10m3-7.5c0-1.1-1.3-2-3-2s-3 .9-3 2 1.3 2 3 2 3 .9 3 2-1.3 2-3 2-3-.9-3-2" />
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-slate-800">
-                      Pricing
-                    </h3>
-                    <p class="text-xs text-slate-400">
-                      Set product purchase and selling prices
-                    </p>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                  <!-- COST PRICE -->
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700" >
-                      Cost Price
-                    </label>
-
-                    <div class="relative">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400" >
-                        $
-                      </span>
-                      <input
-                        v-model.number="form.costPrice" type="number" min="0"  placeholder="0.00"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-8 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
-                    </div>
-                  </div>
-
-                  <!-- SALE PRICE -->
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                      Sale Price
-                      <span class="text-red-500">*</span>
-                    </label>
-
-                    <div class="relative ">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
-                        $
-                      </span>
-
-                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
-                        class="w-full  rounded-xl border border-green-200 bg-green-50/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                      deals
-                      <span class="text-red-500">*</span>
-                    </label>
-
-                    <div class="relative ">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
-                        %
-                      </span>
-
-                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
-                        class="w-full  rounded-xl border border-green-200 bg-green-50/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"/>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="mb-1.5 block text-sm font-semibold  text-slate-700">
-                      Old Price
-                      <span class="text-red-500">*</span>
-                    </label>
-
-                    <div class="relative ">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-green-600">
-                        $
-                      </span>
-
-                      <input v-model.number="form.salePrice" type="number" min="0" placeholder="0.00"
-                        class="w-full  rounded-xl border border-green-200 bg-gray-300/40 py-2.5 pl-8 pr-4 text-sm font-semibold text-green-700 outline-none transition placeholder:text-green-300 focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10" />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-
-                <div class="flex  flex-col">
-                <section class="flex h-full min-h-0 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <!-- IMAGE HEADER -->
-                    <div class="mb-4 flex items-center justify-between ">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2" >
-                                <rect
-                                    width="18"
-                                    height="18"
-                                    x="3"
-                                    y="3"
-                                    rx="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M21 15l-5-5L5 21" />
-                            </svg>
-                            </div>
-
-                            <div>
-                            <h3 class="font-bold text-slate-800">
-                                Product Image
-                            </h3>
-
-                            <p class="text-xs text-slate-400">
-                                Upload product photo
-                            </p>
-                            </div>
-                        </div>
-
-                    <span
-                        class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-600"
-                    >
-                        Optional
-                    </span>
-                    </div>
-                    <div class="relative flex min-h-0 flex-1 items-center justify-center  rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 transition hover:border-green-300 hover:bg-green-50/30 ">
-                    <div v-if="imagePreview"
-                        class="relative flex h-full w-full items-center justify-center p-5">
-                        <img :src="imagePreview" alt="Product preview"
-                            class="w-full h-50 rounded-xl object-contain"/>
-
-                        <!-- REMOVE -->
-                        <button
-                        type="button"
-                        @click="removeImage"
-                        class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-500 shadow-lg transition hover:bg-red-50 hover:text-red-600"
-                        >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                        </button>
-                    </div>
-
-                    <!-- UPLOAD STATE -->
-                    <div
-                        v-else
-                        class="flex flex-col items-center justify-center px-8 text-center"
-                    >
-                        <div
-                        class="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-green-100 text-green-600"
-                        >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-10 w-10"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16"
-                            />
-
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M14 8h.01M5 20h14a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v14a1 1 0 001 1z"
-                            />
-                        </svg>
-                        </div>
-
-                        <h4 class="text-base font-bold text-slate-700">
-                        Upload Product Image
-                        </h4>
-
-                        <p class="mt-1 max-w-xs text-sm leading-5 text-slate-400">
-                        PNG, JPG, JPEG or WEBP
-                        </p>
-
-                        <p class="mb-5 text-xs text-slate-400">
-                        Maximum file size 5MB
-                        </p>
-
-                        <button
-                        type="button"
-                        @click="openFilePicker"
-                        class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-green-700 hover:shadow-md active:scale-[0.98]"
-                        >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 16V4m0 0L8 8m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"
-                            />
-                        </svg>
-
-                        Choose Image
-                        </button>
-                    </div>
-                    </div>
-
-                    <!-- HIDDEN INPUT -->
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label :class="label" for="sale">Sale price <span class="text-lime-300">*</span></label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-lime-200">$</span>
                     <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                    class="hidden"
-                    @change="handleImage"
+                      id="sale"
+                      v-model.number="form.salePrice"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      :class="[input, 'pl-8 text-base font-bold', errors.salePrice && 'border-red-300 bg-red-400/10']"
+                      @input="errors.salePrice = ''"
                     />
-
-                 
-                </section>
+                  </div>
+                  <p v-if="errors.salePrice" class="mt-1.5 text-xs font-medium text-red-200">{{ errors.salePrice }}</p>
+                  <p v-else class="mt-1.5 text-xs text-white/50">What customers pay.</p>
                 </div>
-            </div>
+
+                <div>
+                  <label :class="label" for="deals">Deals</label>
+                  <input id="deals" v-model.number="form.deals" type="number" min="0" step="1" placeholder="1" :class="input" />
+                </div>
+
+                <div>
+                  <label :class="label" for="timeOfDeals">Deal ends</label>
+                  <input id="timeOfDeals" v-model="form.timeOfDeals" type="date" :class="[input, 'scheme-dark']" />
+                  <p class="mt-1.5 text-xs text-white/50">Leave empty for no end date.</p>
+                </div>
+              </div>
+            </section>
           </div>
+
+          <!-- ================= RIGHT: FLOATING GLASS PREVIEW ================= -->
+          <aside class="lg:sticky lg:top-8">
+            <div class="rounded-3xl border border-white/25 bg-white/15 p-4 shadow-2xl shadow-black/20 backdrop-blur-2xl">
+              <p class="mb-3 flex items-center gap-2 px-1 text-sm font-medium text-white/90">
+                <span class="h-2 w-2 rounded-full bg-lime-300"></span>
+                Live preview
+              </p>
+
+              <!-- image stage = upload -->
+              <div
+                role="button"
+                tabindex="0"
+                :aria-label="imagePreview ? 'Change product image' : 'Upload product image'"
+                @click="openFilePicker"
+                @keydown.enter.prevent="openFilePicker"
+                @keydown.space.prevent="openFilePicker"
+                @dragover.prevent="dragging = true"
+                @dragleave.prevent="dragging = false"
+                @drop.prevent="onDrop"
+                class="group relative flex aspect-[4/3] cursor-pointer items-center justify-center overflow-hidden rounded-2xl transition focus-visible:outline-2 focus-visible:outline-white"
+                :class="[
+                  imagePreview ? 'bg-white/10' : 'border-2 border-dashed border-white/30 bg-white/5 hover:border-white/60 hover:bg-white/10',
+                  dragging && 'border-lime-300 bg-lime-300/10',
+                ]"
+              >
+                <img
+                  v-if="imagePreview"
+                  :src="imagePreview"
+                  alt="Product preview"
+                  class="h-full w-full object-contain p-3 drop-shadow-[0_20px_25px_rgba(0,0,0,0.35)]"
+                />
+
+                <div v-else class="px-6 text-center">
+                  <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-xl">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                  </div>
+                  <p class="mt-3 text-sm font-semibold">Drop a product photo here</p>
+                  <p class="mt-1 text-xs text-white/60">or click to browse. PNG, JPG or WEBP, up to 5 MB.</p>
+                </div>
+
+                <template v-if="imagePreview">
+                  <!-- Remove only appears for a newly chosen image; it goes back to the saved one when editing -->
+                  <button
+                    v-if="form.image"
+                    type="button"
+                    @click.stop="removeImage"
+                    class="absolute right-3 top-3 rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold text-red-100 backdrop-blur transition hover:bg-red-500/40"
+                  >
+                    <i class="fa-solid fa-trash-can mr-1"></i>{{ isEdit ? 'Undo' : 'Remove' }}
+                  </button>
+                  <span class="absolute inset-x-0 bottom-0 bg-black/40 py-1.5 text-center text-xs font-medium opacity-0 backdrop-blur transition group-hover:opacity-100">
+                    Click to change image
+                  </span>
+                </template>
+              </div>
+
+              <!-- image feedback: shown right under the picture so it is not missed -->
+              <p v-if="form.image" class="mt-2 truncate px-1 text-xs text-lime-200" :title="form.image.name">
+                <i class="fa-solid fa-circle-check mr-1"></i>New image selected: {{ form.image.name }}
+              </p>
+              <p v-if="imageError" class="mt-2 px-1 text-xs font-medium text-red-200">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i>{{ imageError }}
+              </p>
+
+              <!-- details as they will appear -->
+              <div class="space-y-2 px-1 pb-1 pt-4">
+                <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+                  <span v-if="form.brand" class="rounded-full bg-white/20 px-2.5 py-1">{{ form.brand }}</span>
+                  <span v-if="form.model" class="rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/20">{{ form.model }}</span>
+                </div>
+
+                <h3 class="text-2xl font-bold leading-tight tracking-tight" :class="form.title ? 'text-white' : 'text-white/30'">
+                  {{ form.title || 'Product title' }}
+                </h3>
+
+                <div v-if="specChips.length" class="flex flex-wrap gap-1.5">
+                  <span v-for="s in specChips" :key="s" class="rounded-lg bg-black/15 px-2 py-1 text-xs text-white/85">{{ s }}</span>
+                </div>
+                <p v-else class="text-xs text-white/40">Processor, memory and storage appear here.</p>
+
+                <div class="flex flex-wrap items-end justify-between gap-3 border-t border-white/15 pt-3">
+                  <span class="text-3xl font-extrabold tracking-tight" :class="form.salePrice ? 'text-white' : 'text-white/30'">
+                    {{ money(form.salePrice) }}
+                  </span>
+                  <span class="rounded-full bg-lime-300/25 px-3 py-1 text-xs font-medium text-lime-100">
+                    {{ dealText }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="handleImage" />
+          </aside>
         </div>
 
-        <!-- ================= FOOTER ================= -->
-        <div class="flex shrink-0 items-center justify-between border-t border-slate-100 bg-white px-8 py-4">
-          <p class="text-xs text-slate-400">
-            Fields marked with
-            <span class="font-bold text-red-500">*</span>
-            are required.
+        <!-- action bar -->
+        <div class="flex items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
+          <p v-if="serverError" class="min-w-0 flex-1 truncate text-sm font-medium text-red-200" :title="serverError">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i>{{ serverError }}
           </p>
+          <p v-else class="flex-1 text-xs text-white/60"><span class="font-bold text-lime-300">*</span> Required</p>
 
-          <div class="flex items-center gap-3">
-            <button
-              type="button"
-              @click="$emit('closeTest')"
-              class="rounded-xl border border-slate-200 bg-black px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <!-- CANCEL -->
-
-
-            <button
-              type="button"
-              @click="CancelAddProduct"
-              class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-
-            <!-- ADD -->
-            <button
-              type="submit"
-              class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-green-700 hover:shadow-md active:scale-[0.98]"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-
-              Add/Host
-            </button>
-          </div>
+          <button
+            type="button"
+            @click="close"
+            class="rounded-xl px-5 py-2.5 text-sm font-semibold text-white/90 transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            :disabled="submitting"
+            class="inline-flex min-w-40 items-center justify-center gap-2 rounded-xl bg-white px-6 py-2.5 text-sm font-bold text-green-900 shadow-lg shadow-black/20 transition hover:bg-lime-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <i v-if="submitting" class="fa-solid fa-spinner fa-spin"></i>
+            <i v-else :class="isEdit ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i>
+            {{ submitting ? 'Saving...' : isEdit ? 'Save changes' : 'Add to web' }}
+          </button>
         </div>
       </form>
     </div>
@@ -590,118 +324,258 @@
 </template>
 
 <script>
-import { web } from "../../../sharing/Sharing";
-import { reactive, ref, onUnmounted } from "vue";
+import axios from "axios";
+import { useRouter, useRoute } from "vue-router";
+import { reactive, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
+
+const API_URL = "http://localhost:2026/api/web";
+const IMG_BASE = "http://localhost:2026/uploadsWebsite/"; // where multer saves the images
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export default {
   emits: ["close", "add"],
-  setup(prop,{emit}) {
+  setup(props, { emit }) {
+    const router = useRouter();
+    const route = useRoute();
+
+    // /website/addProductToWeb?id=...  means edit mode
+    const productId = route.query.id || null;
+    const isEdit = computed(() => !!productId);
+
+    /* ---------- static options & shared classes ---------- */
+    const ramOptions = ["8GB", "16GB", "32GB", "64GB"];
+    const ssdOptions = [
+      { gb: 256, text: "256 GB" },
+      { gb: 512, text: "512 GB" },
+      { gb: 1024, text: "1 TB" },
+      { gb: 2048, text: "2 TB" },
+    ];
+
+    const glass = "rounded-3xl border border-white/20 bg-white/10 p-6 shadow-xl shadow-black/10 backdrop-blur-xl";
+    const sectionTitle = "mb-5 flex items-center gap-3 text-lg font-semibold";
+    const iconBox = "flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-base";
+    const label = "mb-1.5 block text-sm font-medium text-white/90";
+    const input =
+      "w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/45 hover:border-white/40 focus:border-white/70 focus:bg-white/15 focus:ring-4 focus:ring-white/15";
+
+    const chip = (active) => [
+      "rounded-xl px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-white",
+      active
+        ? "bg-white text-green-900 shadow-md shadow-black/15"
+        : "border border-white/20 bg-white/10 text-white/90 hover:bg-white/20",
+    ];
+
+    /* ---------- state ---------- */
     const form = reactive({
-      name: "",
-      description: "",
-      category: "Gaming",
+      title: "",
       brand: "",
       model: "",
+      description: "",
       cpu: "",
       ram: "",
-      ssd: "",
-      image: null,
-      costPrice: null,
+      ssd: null, // size in GB
       salePrice: null,
+      deals: 1,
+      timeOfDeals: "", // yyyy-mm-dd
+      image: null, // only a NEW file chosen in this form
     });
 
+    const errors = reactive({ title: "", brand: "", model: "", cpu: "", ram: "", ssd: "", salePrice: "" });
+    const serverError = ref("");
+    const imageError = ref(""); // problems with the chosen image (type, size, missing)
+    const submitting = ref(false);
+    const dragging = ref(false);
     const fileInput = ref(null);
     const imagePreview = ref(null);
+    const savedImageUrl = ref(null); // image already saved on the server (edit mode)
 
-    /* ================= IMAGE ================= */
-    const openFilePicker = () => {
-      fileInput.value?.click();
+    /* ---------- derived values ---------- */
+    const money = (n) => `$${Number(n || 0).toFixed(2)}`;
+
+    // a saved value like "12GB" still shows up as a chip when editing
+    const ramList = computed(() =>
+      form.ram && !ramOptions.includes(form.ram) ? [...ramOptions, form.ram] : ramOptions
+    );
+
+    const ssdLabel = computed(() => {
+      const n = Number(form.ssd);
+      if (!n) return "";
+      return n >= 1024 && n % 1024 === 0 ? `${n / 1024} TB SSD` : `${n} GB SSD`;
+    });
+
+    const specChips = computed(() =>
+      [form.cpu.trim(), form.ram ? form.ram.replace("GB", " GB") : "", ssdLabel.value].filter(Boolean)
+    );
+
+    const dealText = computed(() => {
+      const n = form.deals === "" || form.deals === null ? 0 : form.deals;
+      const base = `${n} ${Number(n) === 1 ? "deal" : "deals"}`;
+      if (!form.timeOfDeals) return base;
+      return `${base}, ends ${new Date(form.timeOfDeals).toLocaleDateString()}`;
+    });
+
+    /* ---------- image ---------- */
+    const revokePreview = () => {
+      if (imagePreview.value?.startsWith("blob:")) URL.revokeObjectURL(imagePreview.value);
     };
 
-    const handleImage = (event) => {
-      const file = event.target.files?.[0];
+    const openFilePicker = () => fileInput.value?.click();
 
+    const setImage = (file) => {
       if (!file) return;
 
-      const allowedTypes = [
-        "image/png",
-        "image/jpeg",
-        "image/jpg",
-        "image/webp",
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
-        alert("Please select PNG, JPG, JPEG or WEBP image.");
-        event.target.value = "";
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        imageError.value = "Choose a PNG, JPG or WEBP image.";
+        return;
+      }
+      if (file.size > MAX_IMAGE_SIZE) {
+        imageError.value = "That image is over 5 MB. Choose a smaller one.";
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image must be smaller than 5MB.");
-        event.target.value = "";
-        return;
-      }
-
-      if (imagePreview.value) {
-        URL.revokeObjectURL(imagePreview.value);
-      }
-
+      imageError.value = "";
+      revokePreview();
       form.image = file;
       imagePreview.value = URL.createObjectURL(file);
     };
 
+    const handleImage = (event) => {
+      setImage(event.target.files?.[0]);
+      event.target.value = ""; // lets the same file be picked again after removing it
+    };
+
+    const onDrop = (event) => {
+      dragging.value = false;
+      setImage(event.dataTransfer?.files?.[0]);
+    };
+
+    // drops the newly chosen image; in edit mode it goes back to the saved one
     const removeImage = () => {
-      if (imagePreview.value) {
-        URL.revokeObjectURL(imagePreview.value);
-      }
-
-      imagePreview.value = null;
+      imageError.value = "";
+      revokePreview();
       form.image = null;
+      imagePreview.value = savedImageUrl.value;
+    };
 
-      if (fileInput.value) {
-        fileInput.value.value = "";
+    /* ---------- edit mode: load the product ---------- */
+    const loadProduct = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/${productId}`);
+        const p = res.data.data;
+
+        ["title", "brand", "model", "description", "cpu", "ram", "ssd", "salePrice", "deals"].forEach((key) => {
+          if (p[key] !== undefined && p[key] !== null) form[key] = p[key];
+        });
+        form.timeOfDeals = p.timeOfDeals ? String(p.timeOfDeals).slice(0, 10) : "";
+
+        if (p.image) {
+          savedImageUrl.value = IMG_BASE + p.image.split(/[\\/]/).pop();
+          imagePreview.value = savedImageUrl.value;
+        }
+      } catch (error) {
+        console.error("Load web product error:", error);
+        serverError.value = error.response?.data?.message || "Could not load this product.";
       }
     };
 
-    /* ================= MODAL ================= */
-    const closeModal = () => {
-      
+    /* ---------- navigation ---------- */
+    const close = () => {
+      router.replace("/website");
     };
 
-    /* ================= SUBMIT ================= */
-    const handleSubmit = () => {
-      if (!form.name.trim()) {
-        alert("Please enter product name.");
-        return;
-      }
+    const onKeydown = (e) => {
+      if (e.key === "Escape" && !submitting.value) close();
+    };
+    onMounted(() => {
+      window.addEventListener("keydown", onKeydown);
+      if (productId) loadProduct();
+    });
 
-      if (!form.salePrice) {
-        alert("Please enter sale price.");
-        return;
+    /* ---------- submit ---------- */
+    // every field marked * is required by the database model too
+    const validate = () => {
+      errors.title = form.title.trim() ? "" : "Enter a title.";
+      errors.brand = form.brand.trim() ? "" : "Enter the brand.";
+      errors.model = form.model.trim() ? "" : "Enter the model.";
+      errors.cpu = form.cpu.trim() ? "" : "Enter the processor.";
+      errors.ram = form.ram ? "" : "Choose the memory size.";
+      errors.ssd = form.ssd > 0 ? "" : "Enter the storage size in GB.";
+      errors.salePrice = form.salePrice > 0 ? "" : "Enter a sale price above 0.";
+
+      const imageMissing = !isEdit.value && !form.image;
+      imageError.value = imageMissing ? "Add a product photo." : "";
+
+      const order = [
+        ["title", "title"],
+        ["brand", "brand"],
+        ["model", "model"],
+        ["cpu", "cpu"],
+        ["ram", "ram"],
+        ["ssd", "ssd"],
+        ["salePrice", "sale"],
+      ];
+      const firstBad = order.find(([key]) => errors[key]);
+      if (firstBad) {
+        nextTick(() => {
+          const el = document.getElementById(firstBad[1]);
+          el?.scrollIntoView({ block: "center", behavior: "smooth" });
+          el?.focus?.();
+        });
+      }
+      return !firstBad && !imageMissing;
+    };
+
+    const handleSubmit = async () => {
+      serverError.value = "";
+      imageError.value = "";
+      if (!validate()) return;
+
+      const fd = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        if (key === "image") return;
+        // empty fields are sent as "" so the server can clear them when editing
+        fd.append(key, value === null ? "" : value);
+      });
+      if (form.image) fd.append("image", form.image); // field name must be "image"
+
+      submitting.value = true;
+      try {
+        // multipart header is set on purpose: a global JSON header on axios would make the server see an empty body
+        const config = { headers: { "Content-Type": "multipart/form-data" } };
+        const res = isEdit.value
+          ? await axios.put(`${API_URL}/${productId}`, fd, config)
+          : await axios.post(API_URL, fd, config);
+
+        if (res.data?.connect === false) {
+          serverError.value = res.data.message || "Could not save the product.";
+          return;
+        }
+        emit("add", res.data?.data);
+        close();
+      } catch (error) {
+        console.error("Save web product error:", error);
+        serverError.value =
+          error.response?.data?.message || "Could not save the product. Check the server and try again.";
+      } finally {
+        submitting.value = false;
       }
     };
-    const CancelAddProduct = ()=>{
-     web.viewAddProduct=false
-    }
 
-    /* ================= CLEANUP ================= */
+    /* ---------- cleanup ---------- */
     onUnmounted(() => {
-      if (imagePreview.value) {
-        URL.revokeObjectURL(imagePreview.value);
-      }
+      window.removeEventListener("keydown", onKeydown);
+      revokePreview();
     });
 
     return {
-      form,
-      fileInput,
-      imagePreview,
-      openFilePicker,
-      handleImage,
-      removeImage,
-      closeModal,
-      handleSubmit,
-      web,
-      CancelAddProduct
+      ramList, ssdOptions,
+      glass, sectionTitle, iconBox, label, input, chip,
+      form, errors, serverError, imageError, submitting, dragging,
+      fileInput, imagePreview, isEdit,
+      money, specChips, dealText,
+      openFilePicker, handleImage, onDrop, removeImage,
+      close, handleSubmit,
     };
   },
 };

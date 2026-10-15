@@ -1,6 +1,5 @@
 <template>
-
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-green-800 backdrop-blur-sm p-4">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-green-800/0.2 backdrop-blur-sm p-4">
     <div class="w-full max-w-[80%] max-h-[92vh]  px-2 bg-slate-50 shadow-2xl rounded-2xl pt-2 overflow-hidden inset-shadow-[0px_0px_5px] inset-shadow-slate-100">
       <div class="sticky top-0 z-20 flex items-center justify-between bg-green-700 shadow-[0px_0px_1px] shadow-black rounded-2xl  px-5  py-5 text-white">
         <div class="flex items-center gap-4">
@@ -22,8 +21,6 @@
                 ✕
         </button>
       </div>
-
-
       <!-- ================= FORM ================= -->
       <form
         @submit.prevent="save" class="p-6">
@@ -193,10 +190,9 @@
               <div class="flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden 
                        rounded-2xl border border-slate-200 bg-white shadow-sm" >
   
-                <img
-                  v-if="previewImage"
-                  :src="previewImage"
-                  alt="Product Preview" class="h-full w-full object-cover"/>
+                <img v-if="previewImage"
+                  :src="previewImage" alt="Product Preview" 
+                  class="h-full w-full object-cover"/>
   
                 <div v-else class="flex flex-col items-center justify-center text-slate-400" >
                   <span class="text-3xl ">
@@ -223,11 +219,7 @@
               </div>
             </div>
           </div>
-          <!-- ================= BUTTONS ================= -->
         </div>
-
-
-
 
         <div  class="mt-8 flex flex-col-reverse gap-3 border-t  border-slate-100 pt-6 sm:flex-row sm:justify-end" >
         <!-- Cancel -->
@@ -250,17 +242,13 @@
   </div>
 </template>
 
-
 <script>
 import axios from "axios";
 import { ref } from "vue";
-
 export default {
   name: "AddProduct",
   emits: ["save", "cancel"],
-
   setup(props, { emit }) {
-
     const newProduct = ref({
       name: "",
       productCode: "",
@@ -271,72 +259,38 @@ export default {
       currentStock: 0,
       image: null,
     });
-
-
     const previewImage = ref(null);
-
     const saving = ref(false);
-
-
-    // ================= FILE UPLOAD =================
-
     const handleFileUpload = (e) => {
       const file = e.target.files[0];
       if (!file) return;
       newProduct.value.image = file;
       previewImage.value =
         URL.createObjectURL(file);
-
     };
-
-
-    // ================= SAVE =================
-
    const save = async () => {
   try {
-
     const formData = new FormData();
-
     Object.keys(newProduct.value).forEach((key) => {
       const value = newProduct.value[key];
-
       if (value !== null && value !== undefined) {
         formData.append(key, value);
       }
     });
-
-
-    const res = await axios.post("http://localhost:2026/api/products",formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-
-    // Tell Product.vue that saving finished
+    const res = await axios.post("http://localhost:2026/api/products",
+    formData,{ headers: { "Content-Type": "multipart/form-data",},});
     emit("save", res.data.data);
-
   } catch (error) {
-
     console.error(
       "Error creating product:",
       error
     );
-
   }
 };
-
-
     return {
-      newProduct,
-      previewImage,
-      saving,
-      handleFileUpload,
-      save,
+      newProduct, previewImage, saving,
+      handleFileUpload, save,
     };
-
   },
 };
 </script>

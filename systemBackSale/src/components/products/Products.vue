@@ -3,24 +3,19 @@
 <!-- bg-slate-50 -->
     <!-- ================= HEADER ================= -->
     <div class=" overflow-hidden rounded-md bg-linear-to-r to-green-700 via-green-800 from-green-700 shadow-[0px_0px_3px]">
-      <div class="flex flex-col gap-5 p-3
-                   md:flex-row md:items-center md:justify-between">
-
+      <div class="flex flex-col gap-5 p-3 md:flex-row md:items-center md:justify-between">
         <div class="flex items-center gap-4">
           <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-3xl ring-1 ring-white/20">📦</div>
           <div>
             <h1 class="text-2xl font-bold text-white">
               Product Inventory
             </h1>
-
             <p class="mt-1 text-sm text-green-100">
               Manage your computer products and stock
             </p>
           </div>
         </div>
-
-        <!-- Add Button -->
-         
+        <!-- Add Button -->      
            <button
            @click="showAdd = true"
            class="flex items-center justify-center   bg-white/10  ring-1 ring-white/20 gap-2 rounded-xl  px-5 py-3 font-bold text-white
@@ -31,9 +26,7 @@
       </div>
     </div>
 
-
-
-<div  class="h-[568px] flex flex-col rounded-md border border-slate-200 bg-white  ">
+<div  class="h-142 flex flex-col rounded-md border border-slate-200 bg-white  ">
   <div class=" sticky top-0 px-5 py-2 md:px-3 bg-white rounded-md">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between" >
       <!-- Title -->
@@ -41,12 +34,10 @@
           <h2 class="text-lg font-bold text-slate-800">
               All Products
           </h2>
-
           <p class="mt-1 text-sm text-slate-500">
             {{ filteredProducts.length }} products found
           </p>
       </div>
-
       <!-- Search + Filter -->
       <div class="flex flex-col gap-3 sm:flex-row">
         <!-- Search -->
@@ -63,8 +54,7 @@
           <select
                     v-model="categoryFilter"
                     class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-600 outline-none
-                          focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-100">
-                          
+                          focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-100">                    
             <option value="">All Categories</option>
             <option value="Desktop">Desktop</option>
             <option value="Laptop">Laptop</option>
@@ -73,13 +63,11 @@
             <option value="Mouse">Mouse</option>
             <option value="Accessories">Accessories</option>
           </select>
-
         </div>
     </div>
   </div>
 
-
-  <div class="h-[568px] w-full  border border-slate-200 bg-white  overflow-y-scroll">
+  <div class="h-142 w-full  border border-slate-200 bg-white  overflow-y-scroll">
     <div class="">
       <table class=" w-full">
         <!-- Header -->
@@ -94,32 +82,24 @@
                 <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                   Category
                 </th>
-
                 <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                   Cost
                 </th>
-
                 <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                   Sale Price
                 </th>
-
                 <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                   Branch
                 </th>
-
                 <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                   Stock
                 </th>
-
                 <th class="px-5 py-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
                   Action
                 </th>
           </tr>
         </thead>
         <!-- Body -->
-
-
-
         <tbody>
           <tr  v-for="product in filteredProducts"  :key="product._id"
             class="border-b border-slate-100  transition hover:bg-slate-50 *:py-2 ">
@@ -132,18 +112,15 @@
                         v-if="product.image"
                         :src="`http://localhost:2026/uploads/${product.image}`"
                         class="h-10 w-10 object-cover"/>
-
                   <span v-else class="text-2xl">
                      💻
                   </span>
                 </div>
-
                 <!-- Name -->
                 <div >
                   <p class="font-bold text-slate-800" >
                     {{ product.name }}
                   </p>
-
                   <p class="mt-1 text-xs text-slate-400">
                     Product ID: {{ product._id?.slice(-6) }}
                   </p>
@@ -252,8 +229,6 @@
             </td>
           </tr>
         </tbody>
-
-
       </table>
     </div>
     <!-- Footer -->
@@ -277,15 +252,11 @@
     <EditProduct v-if="selectedProduct" :product="selectedProduct" @save="handleEdit"  @cancel="selectedProduct = null" />
   </div>
 </template>
-
-
 <script>
 import axios from "axios";
 import { ref, computed, onMounted,inject ,watch} from "vue";
-
 import AddProduct from "./AddProduct.vue";
 import EditProduct from "./EditProduct.vue";
-
 export default {
   name: "Product",
   components: { AddProduct, EditProduct,},
@@ -296,7 +267,6 @@ export default {
     const selectedProduct = ref(null);
     const search = ref("");
     const categoryFilter = ref("");
-
     const getProducts = async () => {
       try {
         const res = await axios.get("http://localhost:2026/api/products");
@@ -308,18 +278,12 @@ export default {
     // ================= SEARCH =================
    const filteredProducts = computed(() => {
   return products.value.filter((product) => {
-
     const searchText = search.value.toLowerCase().trim();
-
     const matchesSearch =!searchText ||
       product.name?.toLowerCase().includes(searchText) ||
       product.productCode?.toLowerCase().includes(searchText) ||
       product.category?.toLowerCase().includes(searchText);
-
-    const matchesCategory =
-      !categoryFilter.value ||
-      product.category === categoryFilter.value;
-
+    const matchesCategory = !categoryFilter.value || product.category === categoryFilter.value;
     return matchesSearch && matchesCategory;
   });
 });
@@ -360,14 +324,12 @@ export default {
         console.error("Delete product error:", error);
       }
     };
-
    watch(filteredProducts,(newProducts) => {productCount.value = newProducts.length;},
   {
     immediate: true
   }
 );
-    onMounted(getProducts);
-    
+    onMounted(getProducts);   
     return {
       products,
       showAdd,
@@ -379,14 +341,11 @@ export default {
       lowStock,
       outOfStock,
       productCount,
-
       handleAdd,
       editProduct,
       handleEdit,
       deleteProduct,
-
     };
-
   },
 };
 </script>
