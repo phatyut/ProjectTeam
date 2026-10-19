@@ -1,6 +1,7 @@
 import {createRouter,createWebHistory}  from "vue-router";
 import Homepage from "../components/home/Home.vue";
 import Shop from "../components/shop/Shop.vue";
+import Cart from "../components/shop/Cart/Cart.vue";
 import Deals from "../components/deals/Deals.vue";
 import Support from "../components/support/Support.vue";
 import Contact from "../components/contact/Contact.vue";
@@ -15,6 +16,7 @@ const routes =[
     {path:"/",redirect:"/shop"},
     {path:"/home",component:Homepage},
     {path:"/shop",component:Shop},
+    {path:"/cart",component:Cart},
     {path:"/deals",component:Deals},
     {path:"/support",component:Support},
     {path:"/contact",component:Contact},

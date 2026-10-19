@@ -15,15 +15,20 @@ app.use(express.json());
 app.use("/uploadsSuppliers", express.static(path.join(__dirname, "public/uploadsSuppliers")));
 app.use("/uploadsEmployees", express.static(path.join(__dirname, "public/uploadsEmployees")));
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
-app.use("/uploadsWebsite", express.static(path.join(__dirname, "public/uploadsWebsite"))); // <-- was missing: website product images
+app.use("/uploadsWebsite", express.static(path.join(__dirname, "public/uploadsWebsite"))); 
+app.use("/uploadsStock", express.static(path.join(__dirname, "public/uploadsStock")));
+
+// <-- was missing: website product images
+
 
 const ProductRouter = require("./routes/Product.routes");
 const WebRouter = require("./routes/Web.routes");
 const SupplierRouter = require("./routes/suppliers.routes");
 const EmployeeRouter = require("./routes/Employees.Routes");
 const setOptionRouter = require("./routes/SetOption.routes");
-const StockRouter = require("./routes/Stock.routes")
+const StockRouter = require(".//routes/Stock.routes")
 const BatchRouter = require("./routes/Batch.routes")
+
 
 app.use("/api/products", ProductRouter);
 app.use("/api/web", WebRouter);

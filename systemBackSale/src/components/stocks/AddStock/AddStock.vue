@@ -1,1187 +1,222 @@
 <template>
-  <div
-    class="fixed inset-0 z-50 overflow-y-auto bg-slate-100"
-  >
-    <div class="min-h-screen p-4 sm:p-6 lg:p-8">
+  <div class="w-screen fixed top-0 left-0 z-40 overflow-y-scroll h-screen bg-slate-50 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
 
-      <!-- TOP BAR -->
-      <div class="mx-auto mb-6 flex max-w-7xl items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-green-700">
-            Inventory Management
-          </p>
-
-          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">
-            Add New Stock
-          </h1>
-
-          <p class="mt-1 text-sm text-slate-500">
-            Receive products and update your inventory
-          </p>
+      <!-- Header banner -->
+      <div class="relative overflow-hidden rounded-t-3xl bg-gradient-to-r from-emerald-700 via-green-600 to-lime-500 px-8 py-8 text-white">
+        <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10"></div>
+        <div class="absolute right-20 -bottom-16 w-40 h-40 rounded-full bg-white/10"></div>
+        <router-link to="/stocks"
+          class="relative text-sm text-white/80 hover:text-white mb-4 inline-flex items-center gap-2">
+          <font-awesome-icon icon="fa-solid fa-arrow-left" /> Back
+        </router-link>
+        <div class="relative flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-2xl">
+            <font-awesome-icon icon="fa-solid fa-warehouse" />
+          </div>
+          <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Add New Stock</h1>
+            <p class="text-white/80 text-sm">Record inventory for a product batch</p>
+          </div>
         </div>
-
-        <button
-          type="button"
-          @click="cancel"
-          class="flex h-11 w-11 items-center justify-center rounded-xl
-                 border border-slate-200 bg-white text-slate-500
-                 shadow-sm transition hover:bg-slate-50 hover:text-red-500"
-        >
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
       </div>
 
+      <!-- Form -->
+      <form @submit.prevent="submit"
+        class="bg-white rounded-b-3xl shadow-xl px-8 pt-8 pb-28 space-y-9 relative">
 
-      <!-- MAIN -->
-      <div
-        class="mx-auto grid max-w-7xl gap-6
-               xl:grid-cols-[360px_minmax(0,1fr)]"
-      >
-
-        <!-- ================================================= -->
-        <!-- LEFT SIDEBAR -->
-        <!-- ================================================= -->
-        <aside class="space-y-5">
-
-          <!-- STOCK PREVIEW -->
-          <div
-            class="overflow-hidden rounded-3xl
-                   bg-gradient-to-br from-green-950
-                   via-green-900 to-green-700
-                   text-white shadow-xl"
-          >
-
-            <!-- Header -->
-            <div class="p-6">
-
-              <div class="flex items-center gap-4">
-
-                <div
-                  class="flex h-14 w-14 items-center justify-center
-                         rounded-2xl bg-white/10 ring-1 ring-white/20"
-                >
-                  <i class="fa-solid fa-boxes-stacked text-2xl"></i>
-                </div>
-
-                <div>
-                  <p class="text-lg font-bold">
-                    Stock Receipt
-                  </p>
-
-                  <p class="text-sm text-green-200">
-                    New inventory
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-
-            <!-- Product -->
-            <div class="border-t border-white/10 px-6 py-5">
-
-              <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-green-300">
-                Product
-              </p>
-
-              <p class="truncate text-lg font-bold">
-                {{ selectedProduct?.name || "Select a product" }}
-              </p>
-
-              <p
-                v-if="selectedProduct?.productCode"
-                class="mt-1 text-sm text-green-200"
-              >
-                {{ selectedProduct.productCode }}
-              </p>
-
-            </div>
-
-
-            <!-- SUMMARY -->
-            <div class="grid grid-cols-2 border-t border-white/10">
-
-              <div class="border-r border-white/10 p-5">
-                <p class="text-xs uppercase tracking-wider text-green-300">
-                  Quantity
-                </p>
-
-                <p class="mt-1 text-2xl font-bold">
-                  {{ form.quantity || 0 }}
-                </p>
-              </div>
-
-              <div class="p-5">
-                <p class="text-xs uppercase tracking-wider text-green-300">
-                  Status
-                </p>
-
-                <span
-                  class="mt-2 inline-flex rounded-full
-                         bg-green-400/20 px-3 py-1 text-xs
-                         font-semibold text-green-200"
-                >
-                  {{ form.status }}
-                </span>
-              </div>
-
-            </div>
-
-
-            <!-- COST -->
-            <div class="space-y-4 border-t border-white/10 p-6">
-
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-green-200">
-                  Cost / unit
-                </span>
-
-                <span class="font-semibold">
-                  ${{ money(form.costPrice) }}
-                </span>
-              </div>
-
-
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-green-200">
-                  Sale / unit
-                </span>
-
-                <span class="font-semibold">
-                  ${{ money(form.salePrice) }}
-                </span>
-              </div>
-
-
-              <div class="h-px bg-white/10"></div>
-
-
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-green-200">
-                  Total cost
-                </span>
-
-                <span class="text-lg font-bold">
-                  ${{ totalCost }}
-                </span>
-              </div>
-
-
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-green-200">
-                  Expected revenue
-                </span>
-
-                <span class="text-lg font-bold">
-                  ${{ totalRevenue }}
-                </span>
-              </div>
-
-
-              <div
-                class="rounded-2xl bg-white/10 p-4
-                       ring-1 ring-white/10"
-              >
-
-                <div class="flex items-center justify-between">
-
-                  <div>
-                    <p class="text-xs text-green-200">
-                      Expected profit
-                    </p>
-
-                    <p
-                      class="mt-1 text-2xl font-bold"
-                      :class="
-                        profit < 0
-                          ? 'text-red-300'
-                          : 'text-emerald-300'
-                      "
-                    >
-                      ${{ profit }}
-                    </p>
-                  </div>
-
-                  <div
-                    class="flex h-11 w-11 items-center justify-center
-                           rounded-xl bg-white/10"
-                  >
-                    <i class="fa-solid fa-chart-line"></i>
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
+        <!-- 1. Product -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">1</span>
+            <h2 class="text-lg font-bold text-slate-800">Product </h2>
           </div>
-
-
-          <!-- QUICK INFO -->
-          <div
-            class="rounded-3xl border border-slate-200
-                   bg-white p-5 shadow-sm"
-          >
-
-            <div class="mb-4 flex items-center gap-3">
-
-              <div
-                class="flex h-10 w-10 items-center justify-center
-                       rounded-xl bg-green-50 text-green-700"
-              >
-                <i class="fa-solid fa-circle-info"></i>
-              </div>
-
-              <div>
-                <h3 class="font-bold text-slate-800">
-                  Stock tips
-                </h3>
-
-                <p class="text-xs text-slate-500">
-                  Inventory information
-                </p>
-              </div>
-
-            </div>
-
-            <ul class="space-y-3 text-sm text-slate-600">
-
-              <li class="flex gap-2">
-                <i class="fa-solid fa-check mt-0.5 text-green-600"></i>
-                <span>Use the correct warehouse location.</span>
-              </li>
-
-              <li class="flex gap-2">
-                <i class="fa-solid fa-check mt-0.5 text-green-600"></i>
-                <span>Set a reorder level for low stock alerts.</span>
-              </li>
-
-              <li class="flex gap-2">
-                <i class="fa-solid fa-check mt-0.5 text-green-600"></i>
-                <span>Batch IDs help track received inventory.</span>
-              </li>
-
-            </ul>
-
-          </div>
-
-        </aside>
-
-
-        <!-- ================================================= -->
-        <!-- RIGHT FORM -->
-        <!-- ================================================= -->
-        <form
-          @submit.prevent="submit"
-          class="overflow-hidden rounded-3xl border
-                 border-slate-200 bg-white shadow-sm"
-        >
-
-          <!-- FORM HEADER -->
-          <div
-            class="flex flex-col gap-4 border-b border-slate-200
-                   p-6 sm:flex-row sm:items-center
-                   sm:justify-between"
-          >
-
+          <div class="grid sm:grid-cols-2 gap-5">
             <div>
-
-              <div class="flex items-center gap-2">
-
-                <span
-                  class="rounded-lg bg-green-50 px-2.5 py-1
-                         text-xs font-bold text-green-700"
-                >
-                  STOCK
-                </span>
-
-                <span class="text-xs text-slate-400">
-                  New inventory record
-                </span>
-
-              </div>
-
-              <h2 class="mt-2 text-xl font-bold text-slate-900">
-                Stock Information
-              </h2>
-
-              <p class="mt-1 text-sm text-slate-500">
-                Enter the details of the inventory you received.
-              </p>
-
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Product</label>
+              <input type="text" name="product" required placeholder="e.g. ASUS ROG Strix G16"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
             </div>
-
-            <div
-              class="flex h-12 w-12 items-center justify-center
-                     rounded-2xl bg-green-50 text-green-700"
-            >
-              <i class="fa-solid fa-warehouse text-xl"></i>
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Category</label>
+              <input type="text" name="category" list="categoryList" required placeholder="e.g. Laptop"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+              <datalist id="categoryList">
+                <option value="Laptop" />
+                <option value="Desktop" />
+                <option value="Accessory" />
+                <option value="Monitor" />
+                <option value="Storage" />
+                <option value="Network" />
+              </datalist>
             </div>
+          </div>
+        </section>
 
+        <!-- 2. Storage -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">2</span>
+            <h2 class="text-lg font-bold text-slate-800">Storage</h2>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">batchId</label>
+              <input type="text" name="batchId" required placeholder="e.g. B-2026-001"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Location</label>
+              <input type="text" name="location" required placeholder="e.g. Warehouse A - Shelf 3"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Image -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">3</span>
+            <h2 class="text-lg font-bold text-slate-800">
+              Image <span class="text-slate-400 text-sm font-normal">(optional)</span>
+            </h2>
           </div>
 
+          <label class="flex items-center gap-5 cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 p-5 transition">
+            <div class="w-24 h-24 shrink-0 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden">
+              <img v-if="preview" :src="preview" class="w-full h-full object-cover" />
+              <font-awesome-icon v-else icon="fa-solid fa-image" class="text-3xl text-slate-300" />
+            </div>
+            <div>
+              <p class="font-semibold text-slate-700">Click to upload an image</p>
+              <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF or WEBP, up to 5 MB</p>
+            </div>
+            <input type="file" name="image" accept="image/png,image/jpeg,image/gif,image/webp"
+              class="sr-only" @change="onFile" />
+          </label>
+        </section>
 
-          <!-- ERROR -->
-          <div
-            v-if="error"
-            class="mx-6 mt-6 flex items-start gap-3 rounded-2xl
-                   border border-red-200 bg-red-50 p-4 text-sm
-                   text-red-700"
-          >
-            <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
-
-            <span>{{ error }}</span>
+        <!-- 4. Price & quantity -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">4</span>
+            <h2 class="text-lg font-bold text-slate-800">Price &amp; quantity</h2>
           </div>
-
-
-          <!-- FORM CONTENT -->
-          <div class="space-y-8 p-6">
-
-
-            <!-- ================= PRODUCT ================= -->
-            <section>
-
-              <div class="mb-5 flex items-center gap-3">
-
-                <div
-                  class="flex h-9 w-9 items-center justify-center
-                         rounded-xl bg-green-100 text-green-700"
-                >
-                  <i class="fa-solid fa-box"></i>
-                </div>
-
-                <div>
-                  <h3 class="font-bold text-slate-800">
-                    Product
-                  </h3>
-
-                  <p class="text-xs text-slate-500">
-                    Select the product being received
-                  </p>
-                </div>
-
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Price</label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <input type="number" name="price" min="0" step="0.01" required placeholder="0.00"
+                  class="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
               </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quantity</label>
+              <input type="number" name="quantity" min="0" required placeholder="0"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+            </div>
+          </div>
+        </section>
 
+        <!-- 5. Status -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">5</span>
+            <h2 class="text-lg font-bold text-slate-800">Status</h2>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
 
-              <div class="grid gap-5 md:grid-cols-2">
-
-                <div class="md:col-span-2">
-
-                  <label class="label">
-                    Product
-                    <span>*</span>
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-box absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <select
-                      v-model="form.product"
-                      class="input pl-11"
-                      required
-                    >
-
-                      <option value="" disabled>
-                        Select product
-                      </option>
-
-                      <option
-                        v-for="p in products"
-                        :key="p._id"
-                        :value="p._id"
-                      >
-                        {{ p.name }}
-                        {{ p.productCode ? ` — ${p.productCode}` : "" }}
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                </div>
-
-
-                <!-- BATCH -->
-                <div>
-
-                  <label class="label">
-                    Batch ID
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-barcode absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <input
-                      v-model="form.batchId"
-                      type="text"
-                      class="input pl-11"
-                      placeholder="BAT-2026-001"
-                    />
-
-                  </div>
-
-                </div>
-
-
-                <!-- SERIAL -->
-                <div>
-
-                  <label class="label">
-                    Serial Number
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-fingerprint absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <input
-                      v-model="form.serialNumber"
-                      type="text"
-                      class="input pl-11"
-                      placeholder="SN-000123"
-                    />
-
-                  </div>
-
-                </div>
-
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="In Stock" required class="peer sr-only" />
+              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
+                <font-awesome-icon icon="fa-solid fa-circle-check" class="text-lg text-emerald-600" />
+                <span class="text-xs font-semibold text-slate-700">In Stock</span>
               </div>
+            </label>
 
-            </section>
-
-
-            <!-- DIVIDER -->
-            <div class="border-t border-slate-100"></div>
-
-
-            <!-- ================= SUPPLIER ================= -->
-            <section>
-
-              <div class="mb-5 flex items-center gap-3">
-
-                <div
-                  class="flex h-9 w-9 items-center justify-center
-                         rounded-xl bg-blue-50 text-blue-600"
-                >
-                  <i class="fa-solid fa-truck-field"></i>
-                </div>
-
-                <div>
-                  <h3 class="font-bold text-slate-800">
-                    Supplier & Location
-                  </h3>
-
-                  <p class="text-xs text-slate-500">
-                    Where the stock came from and where it is stored
-                  </p>
-                </div>
-
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Low Stock" class="peer sr-only" />
+              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
+                <font-awesome-icon icon="fa-solid fa-battery-quarter" class="text-lg text-yellow-500" />
+                <span class="text-xs font-semibold text-slate-700">Low Stock</span>
               </div>
+            </label>
 
-
-              <div class="grid gap-5 md:grid-cols-2">
-
-                <!-- SUPPLIER -->
-                <div>
-
-                  <label class="label">
-                    Supplier
-                  </label>
-
-                  <select
-                    v-model="form.supplier"
-                    class="input"
-                  >
-
-                    <option value="">
-                      No supplier
-                    </option>
-
-                    <option
-                      v-for="s in suppliers"
-                      :key="s._id"
-                      :value="s._id"
-                    >
-                      {{ s.name }}
-                      {{ s.businessName ? ` — ${s.businessName}` : "" }}
-                    </option>
-
-                  </select>
-
-                </div>
-
-
-                <!-- WAREHOUSE -->
-                <div>
-
-                  <label class="label">
-                    Warehouse
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-warehouse absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <input
-                      v-model="form.warehouse"
-                      type="text"
-                      class="input pl-11"
-                      placeholder="Main Warehouse"
-                    />
-
-                  </div>
-
-                </div>
-
-
-                <!-- LOCATION -->
-                <div>
-
-                  <label class="label">
-                    Storage Location
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-location-dot absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <input
-                      v-model="form.location"
-                      type="text"
-                      class="input pl-11"
-                      placeholder="A-01-03"
-                    />
-
-                  </div>
-
-                </div>
-
-
-                <!-- RECEIVED DATE -->
-                <div>
-
-                  <label class="label">
-                    Received Date
-                    <span>*</span>
-                  </label>
-
-                  <div class="relative">
-
-                    <i
-                      class="fa-solid fa-calendar absolute left-4
-                             top-1/2 -translate-y-1/2
-                             text-slate-400"
-                    ></i>
-
-                    <input
-                      v-model="form.receivedDate"
-                      type="date"
-                      class="input pl-11"
-                      required
-                    />
-
-                  </div>
-
-                </div>
-
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Out of Stock" class="peer sr-only" />
+              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" class="text-lg text-red-500" />
+                <span class="text-xs font-semibold text-slate-700">Out of Stock</span>
               </div>
+            </label>
 
-            </section>
-
-
-            <!-- DIVIDER -->
-            <div class="border-t border-slate-100"></div>
-
-
-            <!-- ================= QUANTITY ================= -->
-            <section>
-
-              <div class="mb-5 flex items-center gap-3">
-
-                <div
-                  class="flex h-9 w-9 items-center justify-center
-                         rounded-xl bg-orange-50 text-orange-600"
-                >
-                  <i class="fa-solid fa-cubes-stacked"></i>
-                </div>
-
-                <div>
-                  <h3 class="font-bold text-slate-800">
-                    Inventory
-                  </h3>
-
-                  <p class="text-xs text-slate-500">
-                    Quantity and stock control
-                  </p>
-                </div>
-
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Reserved" class="peer sr-only" />
+              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
+                <font-awesome-icon icon="fa-solid fa-bookmark" class="text-lg text-blue-500" />
+                <span class="text-xs font-semibold text-slate-700">Reserved</span>
               </div>
+            </label>
 
-
-              <div class="grid gap-5 md:grid-cols-3">
-
-                <!-- QUANTITY -->
-                <div>
-
-                  <label class="label">
-                    Quantity
-                    <span>*</span>
-                  </label>
-
-                  <input
-                    v-model.number="form.quantity"
-                    type="number"
-                    min="1"
-                    class="input"
-                    required
-                  />
-
-                </div>
-
-
-                <!-- REORDER -->
-                <div>
-
-                  <label class="label">
-                    Reorder Level
-                  </label>
-
-                  <input
-                    v-model.number="form.reorderLevel"
-                    type="number"
-                    min="0"
-                    class="input"
-                    placeholder="5"
-                  />
-
-                </div>
-
-
-                <!-- STATUS -->
-                <div>
-
-                  <label class="label">
-                    Status
-                  </label>
-
-                  <select
-                    v-model="form.status"
-                    class="input"
-                  >
-                    <option value="Available">
-                      Available
-                    </option>
-
-                    <option value="Reserved">
-                      Reserved
-                    </option>
-
-                    <option value="Damaged">
-                      Damaged
-                    </option>
-
-                    <option value="Pending">
-                      Pending
-                    </option>
-                  </select>
-
-                </div>
-
+            <label class="cursor-pointer">
+              <input type="radio" name="status" value="Damaged" class="peer sr-only" />
+              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
+                <font-awesome-icon icon="fa-solid fa-triangle-exclamation" class="text-lg text-orange-500" />
+                <span class="text-xs font-semibold text-slate-700">Damaged</span>
               </div>
-
-            </section>
-
-
-            <!-- DIVIDER -->
-            <div class="border-t border-slate-100"></div>
-
-
-            <!-- ================= PRICING ================= -->
-            <section>
-
-              <div class="mb-5 flex items-center gap-3">
-
-                <div
-                  class="flex h-9 w-9 items-center justify-center
-                         rounded-xl bg-emerald-50 text-emerald-600"
-                >
-                  <i class="fa-solid fa-dollar-sign"></i>
-                </div>
-
-                <div>
-                  <h3 class="font-bold text-slate-800">
-                    Pricing
-                  </h3>
-
-                  <p class="text-xs text-slate-500">
-                    Set purchase and selling prices
-                  </p>
-                </div>
-
-              </div>
-
-
-              <div class="grid gap-5 md:grid-cols-2">
-
-                <!-- COST -->
-                <div>
-
-                  <label class="label">
-                    Cost Price / Unit
-                    <span>*</span>
-                  </label>
-
-                  <div class="relative">
-
-                    <span
-                      class="absolute left-4 top-1/2
-                             -translate-y-1/2
-                             font-semibold text-slate-400"
-                    >
-                      $
-                    </span>
-
-                    <input
-                      v-model.number="form.costPrice"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      class="input pl-10"
-                      required
-                    />
-
-                  </div>
-
-                </div>
-
-
-                <!-- SALE -->
-                <div>
-
-                  <label class="label">
-                    Sale Price / Unit
-                    <span>*</span>
-                  </label>
-
-                  <div class="relative">
-
-                    <span
-                      class="absolute left-4 top-1/2
-                             -translate-y-1/2
-                             font-semibold text-slate-400"
-                    >
-                      $
-                    </span>
-
-                    <input
-                      v-model.number="form.salePrice"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      class="input pl-10"
-                      required
-                    />
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            <!-- DIVIDER -->
-            <div class="border-t border-slate-100"></div>
-
-
-            <!-- ================= NOTE ================= -->
-            <section>
-
-              <label class="label">
-                Internal Note
-              </label>
-
-              <textarea
-                v-model="form.note"
-                rows="4"
-                class="input resize-none"
-                placeholder="Add an optional note about this stock..."
-              ></textarea>
-
-            </section>
+            </label>
 
           </div>
+        </section>
 
-
-          <!-- FOOTER -->
-          <div
-            class="flex flex-col-reverse gap-3 border-t
-                   border-slate-200 bg-slate-50 p-6
-                   sm:flex-row sm:justify-end"
-          >
-
-            <button
-              type="button"
-              @click="cancel"
-              class="rounded-xl border border-slate-300
-                     bg-white px-6 py-3 font-semibold
-                     text-slate-600 transition
-                     hover:bg-slate-100"
-            >
-              Cancel
-            </button>
-
-
-            <button
-              type="submit"
-              :disabled="loading"
-              class="flex items-center justify-center
-                     rounded-xl bg-green-700 px-7 py-3
-                     font-semibold text-white shadow-lg
-                     shadow-green-700/20 transition
-                     hover:bg-green-800
-                     disabled:cursor-not-allowed
-                     disabled:opacity-60"
-            >
-
-              <i
-                v-if="!loading"
-                class="fa-solid fa-boxes-stacked mr-2"
-              ></i>
-
-              <i
-                v-else
-                class="fa-solid fa-spinner fa-spin mr-2"
-              ></i>
-
-              {{ loading ? "Saving Stock..." : "Add Stock" }}
-
-            </button>
-
-          </div>
-
-        </form>
-
-      </div>
-
+        <!-- Action bar -->
+        <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 rounded-b-3xl px-8 py-4 flex items-center justify-end gap-3">
+          <router-link to="/stocks"
+            class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-50">
+            Cancel
+          </router-link>
+          <button type="submit" :disabled="loading"
+            class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-60 inline-flex items-center gap-2 shadow-lg shadow-emerald-600/30">
+            <font-awesome-icon :icon="loading ? 'fa-solid fa-spinner' : 'fa-solid fa-floppy-disk'" :spin="loading" />
+            {{ loading ? "Saving..." : "Save stock" }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
-
 <script>
-import {
-  reactive,
-  ref,
-  computed,
-  onMounted,
-} from "vue";
-
-import { useRouter } from "vue-router";
 import axios from "axios";
-
-const API = "http://localhost:2026/api";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
-  name: "AddStock",
-
   setup() {
     const router = useRouter();
-
-    const products = ref([]);
-    const suppliers = ref([]);
-
     const loading = ref(false);
-    const error = ref("");
+    const preview = ref("");
 
-    const form = reactive({
-      product: "",
-      supplier: "",
-
-      batchId: "",
-      serialNumber: "",
-
-      warehouse: "",
-      location: "",
-
-      quantity: 1,
-      reorderLevel: 5,
-
-      costPrice: 0,
-      salePrice: 0,
-
-      receivedDate: new Date()
-        .toISOString()
-        .slice(0, 10),
-
-      status: "Available",
-
-      note: "",
-    });
-
-
-    /* ==============================
-       SELECTED PRODUCT
-    ============================== */
-
-    const selectedProduct = computed(() => {
-      return products.value.find(
-        (p) => p._id === form.product
-      );
-    });
-
-
-    /* ==============================
-       SELECTED SUPPLIER
-    ============================== */
-
-    const selectedSupplier = computed(() => {
-      return suppliers.value.find(
-        (s) => s._id === form.supplier
-      );
-    });
-
-
-    /* ==============================
-       TOTALS
-    ============================== */
-
-    const totalCost = computed(() => {
-      return (
-        (form.quantity || 0) *
-        (form.costPrice || 0)
-      ).toFixed(2);
-    });
-
-
-    const totalRevenue = computed(() => {
-      return (
-        (form.quantity || 0) *
-        (form.salePrice || 0)
-      ).toFixed(2);
-    });
-
-
-    const profit = computed(() => {
-      return (
-        Number(totalRevenue.value) -
-        Number(totalCost.value)
-      ).toFixed(2);
-    });
-
-
-    /* ==============================
-       MONEY FORMAT
-    ============================== */
-
-    const money = (value) => {
-      return Number(value || 0).toFixed(2);
+    const onFile = (e) => {
+      const file = e.target.files[0];
+      preview.value = file ? URL.createObjectURL(file) : "";
     };
 
-
-    /* ==============================
-       RESPONSE LIST
-    ============================== */
-
-    const pickList = (res) => {
-      return Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
-    };
-
-
-    /* ==============================
-       LOAD PRODUCTS / SUPPLIERS
-    ============================== */
-
-    const loadOptions = async () => {
-      try {
-        const [p, s] = await Promise.all([
-          axios.get(`${API}/products`),
-          axios.get(`${API}/suppliers`),
-        ]);
-
-        products.value = pickList(p);
-        suppliers.value = pickList(s);
-
-      } catch (e) {
-
-        error.value =
-          "Failed to load products or suppliers.";
-
-      }
-    };
-
-
-    /* ==============================
-       SUBMIT
-    ============================== */
-
-    const submit = async () => {
-
-      error.value = "";
+    const submit = async (e) => {
+      const data = new FormData(e.target); // includes the image file
       loading.value = true;
-
       try {
-
-        const payload = {
-          ...form,
-        };
-
-        if (!payload.supplier) {
-          delete payload.supplier;
-        }
-
-        const res = await axios.post(
-          `${API}/stock`,
-          payload
-        );
-
-        if (res.data?.connect === false) {
-
-          error.value =
-            res.data.message ||
-            "Could not add stock.";
-
-          return;
-        }
-
-        router.push("/stocks");
-
-      } catch (e) {
-
-        error.value =
-          e.response?.data?.message ||
-          "Server error.";
-
+        await axios.post("http://localhost:2026/api/stocks", data); // axios sets multipart automatically
+        router.replace("/stocks");
+      } catch (err) {
+        alert(err.response?.data?.message || "Server error");
       } finally {
-
         loading.value = false;
-
       }
     };
 
-
-    /* ==============================
-       CANCEL
-    ============================== */
-
-    const cancel = () => {
-      router.replace("/stocks");
-    };
-
-
-    onMounted(loadOptions);
-
-
-    return {
-      products,
-      suppliers,
-
-      form,
-
-      loading,
-      error,
-
-      selectedProduct,
-      selectedSupplier,
-
-      totalCost,
-      totalRevenue,
-      profit,
-
-      money,
-
-      submit,
-      cancel,
-    };
+    return { submit, loading, preview, onFile };
   },
 };
 </script>
-
-
-<style scoped>
-
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #334155;
-}
-
-.label span {
-  color: #ef4444;
-}
-
-.input {
-  width: 100%;
-  min-height: 46px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-
-  background-color: #ffffff;
-
-  padding: 0.65rem 0.9rem;
-
-  font-size: 0.875rem;
-  color: #0f172a;
-
-  outline: none;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
-}
-
-.input:hover {
-  border-color: #cbd5e1;
-}
-
-.input:focus {
-  border-color: #16a34a;
-
-  box-shadow:
-    0 0 0 3px
-    rgba(22, 163, 74, 0.12);
-}
-
-.input::placeholder {
-  color: #94a3b8;
-}
-
-select.input {
-  cursor: pointer;
-}
-
-textarea.input {
-  min-height: auto;
-}
-
-</style>

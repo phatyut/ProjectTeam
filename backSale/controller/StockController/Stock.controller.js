@@ -1,9 +1,10 @@
 const Stock = require("../../model/Stocks.model");
-const getAll =(req,res)=>{
+const getAll =async(req,res)=>{
     try {
+        const doc = await Stock.find();
         res.status(200).json({
             connect:true,
-            data:[]
+            data:doc
         })
         
     } catch (error) {
@@ -13,11 +14,12 @@ const getAll =(req,res)=>{
         })
     }
 }
-const getById =(req,res)=>{
+const getById = async(req,res)=>{
     try {
+        const doc = await Stock.findById(req.params.id);
         res.status(200).json({
             connect:true,
-            data:[]
+            data:doc
         })
         
     } catch (error) {
@@ -27,11 +29,12 @@ const getById =(req,res)=>{
         })
     }
 }
-const create =(req,res)=>{
+const create =async(req,res)=>{
     try {
+        const doc = await Stock.create(req.body)
         res.status(200).json({
             connect:true,
-            data:[]
+            data:doc
         })
         
     } catch (error) {
@@ -41,11 +44,17 @@ const create =(req,res)=>{
         })
     }
 }
-const edit =(req,res)=>{
+const edit =async(req,res)=>{
     try {
+        const id = req.params.id;
+        const updateData = req.body;
+        if(req.file){
+            updateData.image = req.file.filename
+        }
+      await Stock.findByIdAndUpdate(id,updateData,{runValidators:true,new:true})
         res.status(200).json({
             connect:true,
-            data:[]
+            data:"Update successfully."
         })
         
     } catch (error) {

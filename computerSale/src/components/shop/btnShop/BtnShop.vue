@@ -7,14 +7,14 @@
     <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Components')" :class="btnChangeStyle==='Components'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Components</button>
     <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Accessaries')" :class="btnChangeStyle==='Accessaries'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Accessaries</button>
 </div>
-<div class="py-2 flex px-5 font-bold bg-slate-50 rounded-full text-gray-600  border border-slate-100 ">
+<!-- <div class="py-2 flex px-5 font-bold bg-slate-50 rounded-full text-gray-600  border border-slate-100 ">
     <p>Sort by: </p>
     <select name="" id="">
         <option value="">Newtest</option>
         <option value="">Newtest</option>
         <option value="">Newtest</option>
     </select>
-</div>
+</div> -->
 </template>
 <script>
 import { ref,onMounted,watch } from "vue";

@@ -21,6 +21,7 @@ import OrderReturn from "../components/orderReturn/OrderReturn.vue";
 
 
 import Suppliers from "../components/suppliers/Suppliers.vue";
+
 import AddSuppliers from "../components/suppliers/addSuppliers/AddSuppliers.vue";
 import UpdateSuppliers from "../components/suppliers/updateSuppliers/UpdateSuppliers.vue";
 import ViewSupplier from "../components/suppliers/viewSuppliers/ViewSupplier.vue";
@@ -28,6 +29,8 @@ import ViewSupplier from "../components/suppliers/viewSuppliers/ViewSupplier.vue
 
 import Stocks from "../components/stocks/Stocks.vue";
 import AddStock from "../components/stocks/AddStock/AddStock.vue";
+import EditStock from "../components/stocks/editStock/EditStock.vue";
+
 import SetOptionStock from "../components/stocks/setOption/SetOptionStock.vue";
 
 
@@ -73,6 +76,9 @@ const routes =[
 
     {path:"/stocks",component:Stocks},
     {path:"/stocks/AddStocks",component:AddStock},
+    {path:"/stocks/editStock/:id",component:EditStock},
+
+    
     {path:"/stocks/setoptionStock",component:SetOptionStock},
 
 
