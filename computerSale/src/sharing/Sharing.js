@@ -13,4 +13,8 @@ export const pagelogin = reactive({
     loginpage:true
 })
 
+// used
+export const  shop  = reactive({
+    shopmenu:false,
+})
 

@@ -57,6 +57,8 @@ import {
       faCircleXmark,
       faEye,
       faPen,
+      faLayerGroup,
+      faLaptopCode,
      
      
       
@@ -122,7 +124,9 @@ library.add(
            faTriangleExclamation,
            faCircleXmark,
            faEye,
-           faPen
+           faPen,
+           faLaptopCode,
+           faLayerGroup
         );
 
 export {FontAwesomeIcon}

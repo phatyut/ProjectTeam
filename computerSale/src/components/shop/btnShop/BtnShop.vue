@@ -1,42 +1,54 @@
 <template>
-<div class=" py-3 flex gap-2 rounded-md  ">
-    <button class="py-2 px-5 font-bold  rounded-full text-gray-200 text-[13px] border border-slate-100 " @click="clickChnageStyle('all')" :class="btnChangeStyle==='all'?'bg-green-700':'bg-slate-50 text-gray-900'">All</button>
-    <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('gaming')" :class="btnChangeStyle==='gaming'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Gaming</button>
-    <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Labtops')" :class="btnChangeStyle==='Labtops'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Labtops</button>
-    <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Desktops')" :class="btnChangeStyle==='Desktops'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Desktops</button>
-    <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Components')" :class="btnChangeStyle==='Components'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Components</button>
-    <button class="py-2 px-5 font-bold  rounded-full  text-[13px] border border-slate-100 llll" @click="clickChnageStyle('Accessaries')" :class="btnChangeStyle==='Accessaries'?'bg-green-700 text-white':'bg-slate-50 text-gray-900'">Accessaries</button>
+<div class="py-3 flex gap-2 rounded-md">
+    <button class="pr-5 hover:cursor-pointer flex justify-center items-center">
+        <font-awesome-icon icon="fa-solid fa-left-right" class=" hover:bg-slate-100 py-2 px-4 rounded-md text-green-700 text-[20px] bg-slate-50 " @click="switchTool"/>
+    </button>
+
+    <button
+        v-for="c in categories"
+        :key="c.value"
+        type="button"
+        class="py-2 px-5 font-bold rounded-full text-[13px] border border-slate-100 cursor-pointer"
+        :class="shop.category === c.value ? 'bg-green-700 text-white' : 'bg-slate-50 text-gray-900'"
+        @click="shop.category = c.value"
+    >
+        {{ c.label }}
+    </button>
 </div>
-<!-- <div class="py-2 flex px-5 font-bold bg-slate-50 rounded-full text-gray-600  border border-slate-100 ">
-    <p>Sort by: </p>
-    <select name="" id="">
-        <option value="">Newtest</option>
-        <option value="">Newtest</option>
-        <option value="">Newtest</option>
-    </select>
-</div> -->
 </template>
+
 <script>
-import { ref,onMounted,watch } from "vue";
+import { watch } from "vue";
+import { shop } from "../../../sharing/Sharing";
+
 export default {
     setup() {
-        const btnChangeStyle = ref('all')
-        const clickChnageStyle = (style) => {
-            btnChangeStyle.value = style
+        // "value" must match the category saved on each product (WebModel.category)
+        const categories = [
+            { label: "All", value: "all" },
+            { label: "Gaming", value: "gaming" },
+            { label: "Labtops", value: "Labtops" },
+            { label: "Desktops", value: "Desktops" },
+            { label: "Components", value: "Components" },
+            { label: "Accessaries", value: "Accessaries" },
+            { label: "test", value: "test" },
+        ];
+
+        // start with the saved choice (or "all"); no change needed in Sharing.js
+        if (!shop.category) shop.category = localStorage.getItem("btncheckstyle") || "all";
+
+        // remember the choice after a page refresh
+        watch(() => shop.category, (v) => localStorage.setItem("btncheckstyle", v));
+
+        const switchTool = () => {
+            shop.shopmenu = !shop.shopmenu;
         };
-        onMounted(()=>{
-            const checkbtn=localStorage.getItem('btncheckstyle');
-            if(checkbtn){
-                btnChangeStyle.value=checkbtn;
-            }
-        });
-        watch(btnChangeStyle,(newValue)=>{
-            localStorage.setItem('btncheckstyle',newValue);
-        });
+
         return {
-            btnChangeStyle,
-            clickChnageStyle
-        }
-    }
-}
+            categories,
+            shop,
+            switchTool,
+        };
+    },
+};
 </script>

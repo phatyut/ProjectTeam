@@ -1,5 +1,26 @@
 <template>
-<div class="min-h-screen bg-slate-100 rounded-md p-6">
+<div class="min-h-screen bg-slate-100 rounded-md p-6 relative">
+
+    <!-- ================= TOAST NOTIFICATION (w-full style) ================= -->
+    <Transition
+        enter-active-class="transform transition ease-out duration-300"
+        enter-from-class="-translate-y-2 opacity-0"
+        enter-to-class="translate-y-0 opacity-100"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+    >
+        <div v-if="toast.show" class="fixed top-6 left-6 right-6 md:left-1/2 md:-translate-x-1/2 md:max-w-lg z-50 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl border border-slate-100 w-auto">
+            <div :class="toast.type === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg font-bold">
+                {{ toast.type === 'success' ? '✓' : '✕' }}
+            </div>
+            <div class="flex-1">
+                <h4 class="text-sm font-bold text-slate-800">{{ toast.title }}</h4>
+                <p class="text-xs text-slate-500">{{ toast.message }}</p>
+            </div>
+            <button @click="toast.show = false" class="text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+    </Transition>
 
     <!-- Header -->
     <div class="mb-6 flex items-center justify-between">
@@ -8,10 +29,6 @@
             <p class="mt-1 text-sm text-slate-500">Monitor your products and stock levels</p>
         </div>
         <div class="flex gap-2">
-            <button @click="router.replace('/stocks/setoptionStock')" class="flex items-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white shadow-lg shadow-green-700/20 transition hover:bg-green-800">
-                <font-awesome-icon icon="fa-solid fa-plus" />
-                Set Option
-            </button>
             <button @click="router.replace('/stocks/AddStocks')" class="flex items-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white shadow-lg shadow-green-700/20 transition hover:bg-green-800">
                 <font-awesome-icon icon="fa-solid fa-plus" />
                 Add Stock
@@ -21,7 +38,6 @@
 
     <!-- Summary Cards -->
     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
@@ -69,12 +85,10 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Stock Table -->
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
         <!-- Table Header -->
         <div class="flex flex-col gap-4 border-b border-slate-200 p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -98,14 +112,13 @@
         <!-- Table -->
         <div class="overflow-x-auto">
             <table class="w-full min-w-237.5">
-
                 <thead class="bg-slate-50">
                     <tr class="border-b border-slate-200 text-left">
-                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Product</th>
+                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Product ID</th>
+                        <th class="px-5 py-4 text-right text-xs font-bold uppercase text-slate-500">Price</th>
+                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Category</th>
                         <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">batchId</th>
                         <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Location</th>
-                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Category</th>
-                        <th class="px-5 py-4 text-right text-xs font-bold uppercase text-slate-500">Price</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Quantity</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Status</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Action</th>
@@ -118,12 +131,17 @@
                     </tr>
 
                     <tr v-for="stock in paginated" :key="stock._id" class="border-b border-slate-100 transition hover:bg-slate-50">
-
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-slate-100">
-                                    <img v-if="stock.image" :src="`${BASE}/uploadsStock/${stock.image}`" class="h-full w-full object-cover" />
-                                    <font-awesome-icon v-else icon="fa-solid fa-box" class="text-xl text-green-700" />
+                                <div class="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-lg font-bold text-green-700">
+                                    <span>{{ String(stock.product || '?').charAt(0).toUpperCase() }}</span>
+                                    <img
+                                        v-if="stock.image && !failed[stock._id]"
+                                        :src="imageOf(stock.image)"
+                                        :alt="stock.product"
+                                        class="absolute inset-0 h-full w-full object-cover"
+                                        @error="failed[stock._id] = true"
+                                    />
                                 </div>
                                 <p class="font-semibold text-slate-800">{{ stock.product }}</p>
                             </div>
@@ -158,11 +176,24 @@
                                 <button @click="router.replace(`/stocks/editStock/${stock._id}`)" class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
                                     <font-awesome-icon icon="fa-solid fa-pen" />
                                 </button>
+                                <button
+                                    type="button"
+                                    title="Delete"
+                                    :disabled="deletingId === stock._id"
+                                    @click="promptDelete(stock)"
+                                    class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg bg-red-50 text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                        <path d="M3 6h18" />
+                                        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                        <path d="M10 11v6M14 11v6" />
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
-
             </table>
         </div>
 
@@ -201,7 +232,36 @@
                 </button>
             </div>
         </div>
+    </div>
 
+    <!-- ================= MODERN DELETE CONFIRMATION MODAL ================= -->
+    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 text-center border border-slate-100 transform transition-all">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 text-2xl mb-4">
+                ⚠️
+            </div>
+            <h3 class="text-xl font-bold text-slate-800">Delete Stock Item?</h3>
+            <p class="mt-2 text-sm text-slate-500">
+                Are you sure you want to delete <span class="font-semibold text-slate-700">{{ stockToDelete?.product || 'this item' }}</span> (Batch: {{ stockToDelete?.batchId }})? This action cannot be undone.
+            </p>
+
+            <div class="mt-6 flex gap-3 justify-center">
+                <button
+                    type="button"
+                    @click="showDeleteModal = false"
+                    class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-600 transition hover:bg-slate-100 active:scale-95"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    @click="confirmDelete"
+                    class="flex-1 rounded-xl bg-red-600 px-4 py-3 font-semibold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700 active:scale-95"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 </template>
@@ -223,6 +283,7 @@ export default {
     setup() {
         const router = useRouter();
         const BASE = "http://localhost:2026";
+        const dbCategory ="http://localhost:2026/api/batches"; 
         const stocks = ref([]);
         const search = ref("");
         const categoryFilter = ref("");
@@ -234,9 +295,69 @@ export default {
         const page = ref(1);
         const perPage = ref(10);
 
+        // ---------- Modern Toast State ----------
+        const toast = ref({
+            show: false,
+            type: "success",
+            title: "",
+            message: ""
+        });
+
+        const showToast = (title, message, type = "success") => {
+            toast.value = { show: true, type, title, message };
+            setTimeout(() => {
+                toast.value.show = false;
+            }, 4000);
+        };
+
+        // ---------- images ----------
+        const failed = ref({});
+
+        const imageOf = (name) => {
+            if (!name) return "";
+            if (/^https?:\/\//.test(name)) return name;
+            return `${BASE}/uploadsStock/${String(name).split(/[\\/]/).pop()}`;
+        };
+
         const getAll = async () => {
-            const res = await axios.get(`${BASE}/api/stocks`);
-            stocks.value = res.data.data;
+            try {
+                const res = await axios.get(`${BASE}/api/stocks`);
+                stocks.value = res.data?.data || [];
+                failed.value = {};
+            } catch (error) {
+                console.log(error);
+                showToast("Connection Error", "Failed to load stocks from server.", "error");
+            }
+        };
+
+        // ---------- Delete Modal & Actions ----------
+        const deletingId = ref(null);
+        const showDeleteModal = ref(false);
+        const stockToDelete = ref(null);
+
+        const promptDelete = (stock) => {
+            stockToDelete.value = stock;
+            showDeleteModal.value = true;
+        };
+
+        const confirmDelete = async () => {
+            if (!stockToDelete.value) return;
+            deletingId.value = stockToDelete.value._id;
+            
+            try {
+                await axios.delete(`${BASE}/api/stocks/${stockToDelete.value._id}`);
+                stocks.value = stocks.value.filter((s) => s._id !== stockToDelete.value._id);
+                if (page.value > totalPages.value) page.value = totalPages.value;
+                
+                showDeleteModal.value = false;
+                showToast("Deleted Successfully", "The stock item has been removed.", "success");
+            } catch (error) {
+                console.log(error);
+                showToast("Delete Failed", error.response?.data?.message || "Cannot delete this stock.", "error");
+            } finally {
+                deletingId.value = null;
+                stockToDelete.value = null;
+            }
         };
 
         const categories = computed(() => [...new Set(stocks.value.map((s) => s.category))]);
@@ -259,7 +380,6 @@ export default {
             return filtered.value.slice(start, start + perPage.value);
         });
 
-        // show at most 5 page buttons around the current page
         const pages = computed(() => {
             const total = totalPages.value;
             const start = Math.max(1, Math.min(page.value - 2, total - 4));
@@ -282,20 +402,22 @@ export default {
                 Damaged: "bg-orange-100 text-orange-700",
             })[status] || "bg-slate-100 text-slate-600";
 
-        onMounted(getAll);
-
-        watch(stocks, (newstock) => {
-            stockCount.value = newstock.length;
+        watch(stocks, (list) => {
+            if (stockCount) stockCount.value = list.length;
+            if (lowStockCount) lowStockCount.value = list.filter((x) => x.status === "Low Stock").length;
+            if (outOfStockCount) outOfStockCount.value = list.filter((x) => x.status === "Out of Stock").length;
         });
 
-        // go back to page 1 when filters or page size change
         watch([search, categoryFilter, perPage], () => {
             page.value = 1;
         });
 
+        onMounted(getAll);
+
         return {
             router,
             BASE,
+            dbCategory,
             stocks,
             search,
             categoryFilter,
@@ -311,7 +433,15 @@ export default {
             lowStockCount,
             outOfStockCount,
             count,
-            badge
+            badge,
+            imageOf,
+            failed,
+            deletingId,
+            promptDelete,
+            showDeleteModal,
+            stockToDelete,
+            confirmDelete,
+            toast
         };
     },
 };

@@ -27,15 +27,15 @@
 
       <div class="mt-3 grid grid-cols-3 gap-2">
         <div class="rounded-lg bg-slate-50 p-2 text-center">
-          <p class="text-[10px] text-slate-400">CPU</p>
+          <p class="text-2xs text-slate-400">CPU</p>
           <p class="text-xs font-bold text-slate-700">{{ cpu }}</p>
         </div>
         <div class="rounded-lg bg-slate-50 p-2 text-center">
-          <p class="text-[10px] text-slate-400">RAM</p>
+          <p class="text-2xs text-slate-400">RAM</p>
           <p class="text-xs font-bold text-slate-700">{{ ram }}</p>
         </div>
         <div class="rounded-lg bg-slate-50 p-2 text-center">
-          <p class="text-[10px] text-slate-400">SSD</p>
+          <p class="text-2xs text-slate-400">SSD</p>
           <p class="text-xs font-bold text-slate-700">{{ ssd }}</p>
         </div>
       </div>

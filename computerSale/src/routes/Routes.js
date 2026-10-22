@@ -9,6 +9,8 @@ import About from "../components/about/About.vue";
 import signup from "../components/register/signup.vue";
 import Login from "../components/register/login.vue";
 
+import ManageAccoun from "../components/head/account/ManageAccoun.vue";
+
 // testing
 import Testpage from "../components/test/Testpage.vue";
 
@@ -24,6 +26,10 @@ const routes =[
 
     {path:"/signup",component:signup},
     {path:"/login",component:Login},
+    {path:"/account",component:ManageAccoun},
+
+
+
     {path:"/test",component:Testpage},
 ]
 

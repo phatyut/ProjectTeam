@@ -4,7 +4,7 @@
     <div class="flex w-full gap-4">
 
         <!-- ================= SIDEBAR ================= -->
-        <div class="w-[20%] h-full px-2">
+        <div class="w-[20%] h-full px-2" v-if="shop.shopmenu">
             <div class="sticky top-16">
                 <div class="rounded-md flex flex-col gap-3">
                     <div class="bg-slate-50 p-3 rounded-md border border-slate-100">
@@ -54,8 +54,8 @@
         </div>
 
         <!-- ================= PRODUCTS ================= -->
-        <div class="flex flex-col gap-3 w-full">
-            <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-3 w-full" :class="shop.shopmenu?'flex flex-col gap-3 w-full':'flex justify-start  items-center'">
+            <div class="flex justify-between relative w-[85%] items-center">
                 <BtnShop/>
             </div>
 
@@ -74,91 +74,110 @@
                 No products found.
             </p>
             <p v-else-if="!filteredWebs.length" class="py-10 text-center text-slate-400">
-                No products match the selected price.
+                No products match the selected filters.
             </p>
 
-            <div class="grid grid-cols-4 gap-5 w-full text-black">
+            <div class="grid grid-cols-4 gap-8 text-black" :class="shop.shopmenu?'w-full':'w-[85%]'">
                 <div v-for="items in filteredWebs" :key="items._id">
-                    <div class="group w-72.5 overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-
+                    <div
+                        class="group relative flex h-full flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-green-400 hover:shadow-xl"
+                    >
                         <!-- IMAGE -->
-                        <div class="relative h-45 overflow-hidden bg-slate-50">
+                        <div class="relative aspect-16/10 overflow-hidden bg-slate-100">
                             <img
                                 :src="imageOf(items.image, items.updatedAt)"
                                 :alt="items.title"
-                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105 cursor-zoom-in"
+                                class="h-full w-full cursor-zoom-in object-cover transition duration-500 group-hover:scale-105"
                                 @error="onImgError"
                                 @click="openZoom(items)"
                             />
 
                             <!-- Title tag -->
-                            <span class="pointer-events-none absolute left-3 top-3 max-w-[70%] truncate rounded-full bg-green-600 px-3 py-1 text-xs font-semibold text-white">
+                            <span class="pointer-events-none absolute left-3 top-3 max-w-[65%] truncate rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white shadow">
                                 {{ items.title }}
                             </span>
 
                             <!-- Favorite -->
-                            <button class="absolute right-3 top-3 h-8 w-8 rounded-full bg-white/90 text-slate-500 shadow-sm transition hover:text-red-500">
+                            <button class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-slate-400 shadow transition hover:text-red-500">
                                 ♥
                             </button>
+
+                            <!-- Discount -->
+                            <span
+                                v-if="discount(items) > 0"
+                                class="pointer-events-none absolute bottom-3 left-3 rounded-md bg-red-600 px-2.5 py-1 text-sm font-extrabold text-white shadow"
+                            >
+                                -{{ discount(items) }}%
+                            </span>
                         </div>
 
-                        <!-- CONTENT -->
-                        <div class="p-4">
-                            <div class="flex justify-between items-center">
-                                <p class="text-xs font-semibold uppercase tracking-wider text-green-600">
-                                    {{ items.model }}
-                                </p>
-                                <p v-if="dealEnd(items)" class="text-xs" :class="dealEnd(items).over ? 'text-red-500' : 'text-slate-400'">
-                                    {{ dealEnd(items).over ? 'Ended' : 'Ends' }} {{ dealEnd(items).text }}
-                                </p>
-                            </div>
-                            <h2 class="mt-1 text-lg font-bold text-slate-800">
-                                {{ items.brand }}
-                            </h2>
+                        <!-- DETAILS -->
+                        <div class="px-5 pt-4">
+                            <p class="truncate text-xs font-semibold uppercase tracking-wider text-green-700">
+                                {{ items.model }}
+                            </p>
+                            <h2 class="truncate text-xl font-extrabold text-slate-900">{{ items.brand }}</h2>
 
+                            <!-- SPECS -->
                             <div class="mt-3 grid grid-cols-3 gap-2">
-                                <div class="rounded-lg bg-slate-50 p-2 text-center">
-                                    <p class="text-[10px] text-slate-400">CPU</p>
-                                    <p class="truncate text-xs font-bold text-slate-700" :title="items.cpu">{{ items.cpu }}</p>
+                                <div class="min-w-0 rounded-lg bg-slate-100 px-2 py-2 text-center">
+                                    <p class="text-xs font-medium text-slate-500">CPU</p>
+                                    <p class="truncate text-sm font-bold text-slate-900" :title="items.cpu">{{ items.cpu }}</p>
                                 </div>
-                                <div class="rounded-lg bg-slate-50 p-2 text-center">
-                                    <p class="text-[10px] text-slate-400">RAM</p>
-                                    <p class="text-xs font-bold text-slate-700">{{ items.ram }}</p>
+                                <div class="rounded-lg bg-slate-100 px-2 py-2 text-center">
+                                    <p class="text-xs font-medium text-slate-500">RAM</p>
+                                    <p class="text-sm font-bold text-slate-900">{{ items.ram }}</p>
                                 </div>
-                                <div class="rounded-lg bg-slate-50 p-2 text-center">
-                                    <p class="text-[10px] text-slate-400">SSD</p>
-                                    <p class="text-xs font-bold text-slate-700">{{ ssdLabel(items.ssd) }}</p>
+                                <div class="rounded-lg bg-slate-100 px-2 py-2 text-center">
+                                    <p class="text-xs font-medium text-slate-500">SSD</p>
+                                    <p class="text-sm font-bold text-slate-900">{{ ssdLabel(items.ssd) }}</p>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- PRICE -->
-                            <div class="mt-4 flex items-center justify-between">
+                        <!-- TEAR LINE -->
+                        <div class="relative mt-5">
+                            <div class="mx-5 border-t-2 border-dashed border-slate-300"></div>
+                            <!-- notches: change bg-slate-100 to match your page background -->
+                            <span class="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-slate-200 bg-slate-100"></span>
+                            <span class="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-slate-200 bg-slate-100"></span>
+                        </div>
+
+                        <!-- PRICE + ACTIONS -->
+                        <div class="mt-auto px-5 pb-5 pt-4">
+                            <div class="flex items-end justify-between gap-2">
                                 <div>
-                                    <p class="text-2xl font-extrabold text-green-700">{{ money(finalPrice(items)) }}$</p>
-                                    <p v-if="discount(items) > 0" class="text-xs text-slate-400 line-through">
+                                    <p v-if="discount(items) > 0" class="text-sm text-slate-500 line-through">
                                         {{ money(items.salePrice) }}$
                                     </p>
+                                    <p class="text-3xl font-black leading-none text-green-700">{{ money(finalPrice(items)) }}$</p>
                                 </div>
-                                <span v-if="discount(items) > 0" class="rounded-md bg-red-50 px-2 py-1 text-xs font-bold text-red-600">
-                                    -{{ discount(items) }}%
-                                </span>
+
+                                <p
+                                    v-if="dealEnd(items)"
+                                    class="text-right text-xs font-semibold"
+                                    :class="dealEnd(items).over ? 'text-red-600' : 'text-slate-600'"
+                                >
+                                    {{ dealEnd(items).over ? 'Ended' : 'Deal ends' }}<br />
+                                    {{ dealEnd(items).text }}
+                                </p>
                             </div>
 
                             <div class="mt-4 flex gap-2">
                                 <button
                                     type="button"
-                                    class="flex-1 rounded-lg py-2 text-sm font-bold text-white transition cursor-pointer"
+                                    class="flex-1 cursor-pointer rounded-lg py-2.5 text-base font-bold text-white transition active:scale-95"
                                     :class="justAdded === items._id ? 'bg-green-800' : 'bg-green-600 hover:bg-green-700'"
                                     @click="buy(items)"
                                 >
                                     {{ justAdded === items._id ? 'Added ✓' : 'BUY' }}
                                 </button>
-                                <button class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-green-500 hover:text-green-600">
+                                <button class="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-green-600 hover:text-green-700">
                                     More
                                 </button>
                             </div>
 
-                            <p v-if="qtyInCart(items._id)" class="mt-2 text-center text-xs text-slate-400">
+                            <p v-if="qtyInCart(items._id)" class="mt-2 text-center text-sm font-medium text-green-700">
                                 {{ qtyInCart(items._id) }} in your cart
                             </p>
                         </div>
@@ -215,6 +234,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue"
 import { useRouter } from "vue-router"
 import axios from "axios"
 import { useCart } from "./UseCart.js" // change the path if you saved useCart.js somewhere else
+import { shop } from "../../sharing/Sharing.js"
 
 const API = "http://localhost:2026/api/web";
 
@@ -296,15 +316,23 @@ export default {
             return { text: d.toLocaleDateString(), over: d < new Date() };
         };
 
-        // ---------- price filter ----------
+        // ---------- filters ----------
         // the slider goes up to the most expensive product, so it always fits your data
         const maxPrice = computed(() => {
             const top = Math.max(0, ...webs.value.map(finalPrice));
             return Math.ceil(top);
         });
 
+        // a product must pass BOTH filters: the price slider and the category buttons (BtnShop)
         const filteredWebs = computed(() =>
-            webs.value.filter((p) => finalPrice(p) <= setRangePrice.value)
+            webs.value.filter((p) => {
+                const okPrice = finalPrice(p) <= setRangePrice.value;
+                const current = String(shop.category || "all").toLowerCase();
+                const okCategory =
+                    current === "all" ||
+                    String(p.category || "").toLowerCase() === current;
+                return okPrice && okCategory;
+            })
         );
 
         // ---------- cart ----------
@@ -365,6 +393,7 @@ export default {
         onMounted(getItemsWeb);
 
         return {
+            shop,
             setRangePrice,
             maxPrice,
             webs,

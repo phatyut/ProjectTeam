@@ -25,18 +25,29 @@ const ProductRouter = require("./routes/Product.routes");
 const WebRouter = require("./routes/Web.routes");
 const SupplierRouter = require("./routes/suppliers.routes");
 const EmployeeRouter = require("./routes/Employees.Routes");
-const setOptionRouter = require("./routes/SetOption.routes");
+
 const StockRouter = require(".//routes/Stock.routes")
-const BatchRouter = require("./routes/Batch.routes")
+const setCategory = require("./routes/SetCategory.routes");
+const setProductCode = require("./routes/setProductCodes.routes")
+
+
+//  testing controller 
+
+const TestRouter = require("./routes/Test.routes")
 
 
 app.use("/api/products", ProductRouter);
 app.use("/api/web", WebRouter);
 app.use("/api/suppliers", SupplierRouter);
 app.use("/api/employees", EmployeeRouter);
-app.use("/api/setOption", setOptionRouter);
+app.use("/api/setproductcode",setProductCode)
 app.use("/api/stocks", StockRouter);
-app.use("/api/batches", BatchRouter);
+app.use("/api/category", setCategory);
+
+
+// testing router 
+
+app.use("/api/test",TestRouter)
 
 // ---------- 404 + error handler (must stay last)
 app.use((req, res) => {

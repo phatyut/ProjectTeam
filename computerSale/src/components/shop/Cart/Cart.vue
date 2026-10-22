@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full min-h-full bg-gradient-to-br from-green-50 via-slate-50 to-white p-4 md:p-8">
+    <div class="w-full min-h-full bg-gradient-to-br fixed top-0 left-0 z-40 from-green-50 via-slate-50 to-white p-4 md:p-8">
 
         <!-- Success screen -->
         <div v-if="confirmed" class="mx-auto mt-10 max-w-md rounded-2xl bg-white p-8 text-center shadow-lg ring-1 ring-green-100">

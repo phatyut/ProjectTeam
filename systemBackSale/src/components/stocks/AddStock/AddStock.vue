@@ -29,54 +29,45 @@
         <section>
           <div class="flex items-center gap-3 mb-4">
             <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">1</span>
-            <h2 class="text-lg font-bold text-slate-800">Product </h2>
+            <h2 class="text-lg font-bold text-slate-800">Product</h2>
           </div>
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Product</label>
-              <input type="text" name="product" required placeholder="e.g. ASUS ROG Strix G16"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Category</label>
-              <input type="text" name="category" list="categoryList" required placeholder="e.g. Laptop"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
-              <datalist id="categoryList">
-                <option value="Laptop" />
-                <option value="Desktop" />
-                <option value="Accessory" />
-                <option value="Monitor" />
-                <option value="Storage" />
-                <option value="Network" />
-              </datalist>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Product ID</label>
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  name="product" 
+                  v-model="productId"
+                  @blur="checkProductId"
+                  required 
+                  placeholder="e.g. ASUS ROG Strix G16"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" 
+                />
+                <button 
+                  type="button" 
+                  @click="checkProductId"
+                  class="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition shrink-0 border border-slate-200">
+                  Check
+                </button>
+              </div>
+              <!-- Validation Feedback Message -->
+              <p v-if="productStatus === 'ok'" class="text-xs font-medium text-emerald-600 mt-1.5 flex items-center gap-1">
+                <font-awesome-icon icon="fa-solid fa-circle-check" /> Product ID matches database.
+              </p>
+              <p v-else-if="productStatus === 'no'" class="text-xs font-medium text-red-500 mt-1.5 flex items-center gap-1">
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" /> Product ID does not exist in the database.
+              </p>
             </div>
           </div>
         </section>
 
-        <!-- 2. Storage -->
+       
+
+        <!-- 2. Image -->
         <section>
           <div class="flex items-center gap-3 mb-4">
             <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">2</span>
-            <h2 class="text-lg font-bold text-slate-800">Storage</h2>
-          </div>
-          <div class="grid sm:grid-cols-2 gap-5">
-            <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">batchId</label>
-              <input type="text" name="batchId" required placeholder="e.g. B-2026-001"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Location</label>
-              <input type="text" name="location" required placeholder="e.g. Warehouse A - Shelf 3"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
-            </div>
-          </div>
-        </section>
-
-        <!-- 3. Image -->
-        <section>
-          <div class="flex items-center gap-3 mb-4">
-            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">3</span>
             <h2 class="text-lg font-bold text-slate-800">
               Image <span class="text-slate-400 text-sm font-normal">(optional)</span>
             </h2>
@@ -87,13 +78,38 @@
               <img v-if="preview" :src="preview" class="w-full h-full object-cover" />
               <font-awesome-icon v-else icon="fa-solid fa-image" class="text-3xl text-slate-300" />
             </div>
-            <div>
+            <div class="min-w-0">
               <p class="font-semibold text-slate-700">Click to upload an image</p>
               <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF or WEBP, up to 5 MB</p>
+              <p v-if="fileName" class="mt-1 truncate text-xs font-medium text-emerald-700">{{ fileName }}</p>
             </div>
             <input type="file" name="image" accept="image/png,image/jpeg,image/gif,image/webp"
               class="sr-only" @change="onFile" />
           </label>
+        </section>
+
+         <!-- 3. Storage -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">3</span>
+            <h2 class="text-lg font-bold text-slate-800">Storage</h2>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">batchId</label>
+              <input type="text" name="batchId" required placeholder="e.g. B-2026-001"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Location</label>
+              <input type="text" name="location" list="locationList" required
+                autocomplete="off" placeholder="e.g. Warehouse A - Shelf 3"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+              <datalist id="locationList">
+                <option v-for="loc in locationList" :key="loc" :value="loc" />
+              </datalist>
+            </div>
+          </div>
         </section>
 
         <!-- 4. Price & quantity -->
@@ -189,34 +205,158 @@
 
 <script>
 import axios from "axios";
-import { ref } from "vue";
+import { ref, onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+const LOCATION_KEY = "savedStockLocations";
 
 export default {
   setup() {
     const router = useRouter();
     const loading = ref(false);
     const preview = ref("");
+    const fileName = ref("");
+
+    // ---- Product ID validation check (last 8 characters) ----
+    const productId = ref("");
+    const productStatus = ref(null); // null, 'ok', or 'no'
+
+    const checkProductId = async () => {
+      const inputVal = productId.value.trim();
+      if (!inputVal) {
+        productStatus.value = null;
+        return;
+      }
+
+      // Get the last 8 characters of the user input (or fewer if input length is < 8)
+      const inputLast8 = inputVal.slice(-8).toLowerCase();
+
+      try {
+        const res = await axios.get("http://localhost:2026/api/products");
+        const rows = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        
+        const exists = rows.some((p) => {
+          const dbStr = (p.productId || p._id || p.name || "").toString().trim();
+          const dbLast8 = dbStr.slice(-8).toLowerCase();
+          return dbLast8 === inputLast8;
+        });
+
+        productStatus.value = exists ? "ok" : "no";
+      } catch (error) {
+        productStatus.value = "no";
+      }
+    };
+
+    // ---- Category suggestions (datalist) ----
+    const categoryList = ref([]);
+    const dbCategory = "http://localhost:2026/api/batches";
+
+    const getCategory = async () => {
+      try {
+        const res = await axios.get(dbCategory);
+        const rows = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        categoryList.value = [
+          ...new Set(
+            rows
+              .map((b) =>
+                typeof b === "string" ? b : b.category?.name ?? b.category ?? b.name
+              )
+              .filter(Boolean)
+          ),
+        ];
+      } catch (error) {
+        console.error("batches request failed:", error);
+      }
+    };
+    onMounted(getCategory);
+
+    // ---- Location suggestions ----
+    const loadLocations = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LOCATION_KEY) || "[]");
+        return Array.isArray(saved) ? saved : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const locationList = ref(loadLocations());
+
+    const rememberLocation = (value) => {
+      const v = (value || "").toString().trim();
+      if (!v) return;
+      const exists = locationList.value.some((l) => l.toLowerCase() === v.toLowerCase());
+      if (exists) return;
+
+      locationList.value.push(v);
+      try {
+        localStorage.setItem(LOCATION_KEY, JSON.stringify(locationList.value));
+      } catch {
+        /* storage unavailable */
+      }
+    };
+
+    // ---- Image preview ----
+    const clearPreview = () => {
+      if (preview.value) URL.revokeObjectURL(preview.value);
+      preview.value = "";
+      fileName.value = "";
+    };
 
     const onFile = (e) => {
       const file = e.target.files[0];
-      preview.value = file ? URL.createObjectURL(file) : "";
+      clearPreview();
+      if (!file) return;
+
+      if (file.size > MAX_SIZE) {
+        alert("Image must be 5 MB or smaller");
+        e.target.value = "";
+        return;
+      }
+      preview.value = URL.createObjectURL(file);
+      fileName.value = file.name;
     };
 
+    // ---- Submit ----
     const submit = async (e) => {
-      const data = new FormData(e.target); // includes the image file
+      const data = new FormData(e.target);
+
+      const picked = data.get("image");
+      const hasPicture = picked instanceof File && picked.size > 0;
+
       loading.value = true;
       try {
-        await axios.post("http://localhost:2026/api/stocks", data); // axios sets multipart automatically
+        const res = await axios.post("http://localhost:2026/api/stocks", data);
+
+        rememberLocation(data.get("location"));
+
+        if (hasPicture && !res.data?.data?.image) {
+          alert("Stock saved, but the server did not keep the picture.");
+        }
         router.replace("/stocks");
       } catch (err) {
-        alert(err.response?.data?.message || "Server error");
+        alert(err.response?.data?.error || err.response?.data?.message || "Server error");
       } finally {
         loading.value = false;
       }
     };
 
-    return { submit, loading, preview, onFile };
+    onBeforeUnmount(clearPreview);
+
+    return {
+      submit,
+      loading,
+      preview,
+      fileName,
+      onFile,
+      categoryList,
+      dbCategory,
+      locationList,
+      productId,
+      productStatus,
+      checkProductId,
+    };
   },
 };
 </script>

@@ -1,7 +1,10 @@
 import {createRouter,createWebHistory} from "vue-router";
 
 import Dashboard from "../components/dashboard/Dashboard.vue";
+
+
 import Products from "../components/products/Products.vue";
+import SetCategory from "../components/products/setOption/SetOption.vue";
 
 
 import Website from "../components/web/Website.vue";
@@ -31,7 +34,7 @@ import Stocks from "../components/stocks/Stocks.vue";
 import AddStock from "../components/stocks/AddStock/AddStock.vue";
 import EditStock from "../components/stocks/editStock/EditStock.vue";
 
-import SetOptionStock from "../components/stocks/setOption/SetOptionStock.vue";
+
 
 
 import Sales from "../components/sales/Sales.vue";
@@ -49,7 +52,9 @@ const routes =[
     {path:"/dashboard",component:Dashboard},
     {path:"/login",component:Login},
     {path:"/",redirect:"/login"},
+
     {path:"/products",component:Products},
+    {path:"/products/setoptionStock",component:SetCategory},,
 
 
     {path:"/website",component:Website},
@@ -79,7 +84,7 @@ const routes =[
     {path:"/stocks/editStock/:id",component:EditStock},
 
     
-    {path:"/stocks/setoptionStock",component:SetOptionStock},
+   
 
 
     {path:"/sales",component:Sales},

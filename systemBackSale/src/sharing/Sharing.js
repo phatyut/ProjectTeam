@@ -17,6 +17,11 @@ export const test = reactive({
 });
 
 
+export const Productsref = reactive({
+    viewSetOption:false
+})
+
+
 // export const profile =reactive({
 //     viewProfile:false
 // })

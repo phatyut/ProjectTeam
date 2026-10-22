@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
  
-const BatchSchema = new mongoose.Schema(
+const categorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, unique: true },
   },
   { timestamps: true }
 );
  
- const Batchs= mongoose.model("Batchs", BatchSchema);
+ const Batchs= mongoose.model("Batchs", categorySchema);
 module.exports = Batchs;

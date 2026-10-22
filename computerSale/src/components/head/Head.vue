@@ -20,14 +20,14 @@
             <div class="hover:bg-green-100 p-1 rounded-full text-center w-9 h-9 flex justify-center items-center">
                 <font-awesome-icon icon="fa-solid fa-cart-shopping" class="text-green-900 text-[17px]" />
             </div>
-            <button @click="account.viewaccount=true">
+            <button  @click="testingaccount" >
                 <div class="hover:bg-green-100 p-1 rounded-full text-center w-9 h-9">
                     <font-awesome-icon icon="fa-solid fa-user" class="text-green-900 text-[18px]" />
                 </div>
             </button>
         </div>
     </div>
-    <div class="fixed top-0 right-0 w-75 h-full bg-black shadow-2xl z-30 rounded-l-2xl" v-if="account.viewaccount">
+    <div class="fixed top-13 right-0 w-100 h-auto bg-slate-100 shadow-2xl z-30 rounded-l-2xl" v-if="account.viewaccount" >
         <Account></Account>
     </div>
     <div class="absolute top-0 right-10 w-75 h-full bg-white shadow-2xl z-30 rounded-l-2xl" v-if="StoreCard.showCard">
@@ -42,9 +42,14 @@ import StoreCards from './StoreCards/StoreCards.vue';
 export default{
     components:{Account,StoreCards},
     setup(){
+        const testingaccount = ()=>{
+            account.viewaccount = !account.viewaccount
+        }
         return {
             account,
-            StoreCard
+            StoreCard,
+            // function call
+            testingaccount
         }
     }
 }
