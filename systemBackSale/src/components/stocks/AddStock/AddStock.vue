@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen fixed top-0 left-0 z-40 overflow-y-scroll h-screen bg-slate-50 py-8 px-4">
+  <div class="w-screen fixed top-0 left-0 z-40 overflow-y-scroll h-screen bg-slate-50/95 py-8 px-4">
     <div class="max-w-4xl mx-auto">
 
       <!-- Header banner -->
@@ -31,78 +31,120 @@
             <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">1</span>
             <h2 class="text-lg font-bold text-slate-800">Product</h2>
           </div>
-          <div class="grid sm:grid-cols-2 gap-5">
+          <div class="grid sm:grid-cols-1 gap-5">
             <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Product ID</label>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Product ID (Full or Last 8 Chars) / Name</label>
               <div class="flex gap-2">
-                <input 
-                  type="text" 
-                  name="product" 
-                  v-model="productId"
-                  @blur="checkProductId"
-                  required 
-                  placeholder="e.g. ASUS ROG Strix G16"
-                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" 
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  @input="onSearchInput"
+                  required
+                  placeholder="e.g. ID/Name fom Product"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition font-mono"
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   @click="checkProductId"
                   class="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition shrink-0 border border-slate-200">
                   Check
                 </button>
               </div>
+
               <!-- Validation Feedback Message -->
               <p v-if="productStatus === 'ok'" class="text-xs font-medium text-emerald-600 mt-1.5 flex items-center gap-1">
-                <font-awesome-icon icon="fa-solid fa-circle-check" /> Product ID matches database.
+                <font-awesome-icon icon="fa-solid fa-circle-check" /> Product matched: <strong>{{ matchedProduct?.name || matchedProduct?.model }}</strong>
               </p>
               <p v-else-if="productStatus === 'no'" class="text-xs font-medium text-red-500 mt-1.5 flex items-center gap-1">
-                <font-awesome-icon icon="fa-solid fa-circle-xmark" /> Product ID does not exist in the database.
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" /> Product does not exist in the database.
               </p>
+              <p v-else-if="productStatus === 'multiple'" class="text-xs font-medium text-amber-600 mt-1.5 flex items-center gap-1">
+                <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
+                {{ candidates.length }} products match. Pick one below (or paste the full ID).
+              </p>
+
+              <!-- Several matches: user must pick exactly one -->
+              <div v-if="productStatus === 'multiple'" class="mt-3 max-h-64 overflow-y-auto rounded-xl border border-amber-200 bg-amber-50/50 divide-y divide-amber-100">
+                <button
+                  v-for="c in candidates"
+                  :key="c._id"
+                  type="button"
+                  @click="selectCandidate(c)"
+                  class="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-amber-100/60 transition"
+                >
+                  <img v-if="imageUrl(c.image)" :src="imageUrl(c.image)" alt="" class="w-10 h-10 object-cover rounded-lg border border-slate-200 bg-white" />
+                  <div v-else class="w-10 h-10 rounded-lg bg-slate-100 text-emerald-700 font-bold flex items-center justify-center">
+                    {{ String(c.name || c.model || 'P').charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 truncate">{{ c.name || c.model }}</p>
+                    <p class="text-[11px] text-slate-500 truncate">
+                      {{ c.category }} · ${{ c.salePrice }}
+                      <span v-if="c.productCode"> · Code: {{ c.productCode }}</span>
+                    </p>
+                  </div>
+                  <span class="text-[11px] font-mono text-slate-400 shrink-0">…{{ String(c._id).slice(-8) }}</span>
+                </button>
+              </div>
+
+              <!-- Display matched product details if available -->
+              <div v-if="productStatus === 'ok' && matchedProduct" class="mt-3 flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50">
+                <img v-if="matchedProductImage" :src="matchedProductImage" alt="Product Image" class="w-16 h-16 object-cover rounded-lg border border-slate-200 bg-white" />
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-slate-700 truncate">Name: {{ matchedProduct.name || matchedProduct.model }} </p>
+                  <p class="text-[11px] text-slate-500 truncate">
+                    Category: <span class="font-medium text-slate-700">{{ matchedProduct.category }}</span>
+                  </p>
+                  <p class="text-[11px] text-emerald-600 font-medium">Full ID: {{ matchedProduct._id }}</p>
+                  <p class="text-[11px] text-emerald-600 font-medium">Sale Price: ${{ matchedProduct.salePrice }}</p>
+                </div>
+              </div>
+
+              <!-- Already in stock warning -->
+              <div v-if="productStatus === 'ok' && existingStocks.length"
+                class="mt-3 rounded-xl border border-amber-300 bg-amber-50 p-3">
+                <p class="text-sm font-semibold text-amber-700 flex items-center gap-2">
+                  <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
+                  Already in stock: this product has {{ existingStocks.length }}
+                  {{ existingStocks.length === 1 ? "batch" : "batches" }}.
+                </p>
+                <ul class="mt-2 space-y-1">
+                  <li v-for="s in existingStocks" :key="s._id"
+                    class="text-xs text-amber-800 flex flex-wrap gap-x-3">
+                    <span class="font-mono font-semibold">Batch: {{ s.batchId }}</span>
+                    <span>Qty: {{ s.quantity }}</span>
+                    <span>Location: {{ s.location }}</span>
+                    <span>{{ s.status }}</span>
+                  </li>
+                </ul>
+                <p class="mt-2 text-[11px] text-amber-700">
+                  You can still add a new batch with a different Batch ID.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-       
-
-        <!-- 2. Image -->
+        <!-- 2. Storage -->
         <section>
           <div class="flex items-center gap-3 mb-4">
             <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">2</span>
-            <h2 class="text-lg font-bold text-slate-800">
-              Image <span class="text-slate-400 text-sm font-normal">(optional)</span>
-            </h2>
-          </div>
-
-          <label class="flex items-center gap-5 cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 p-5 transition">
-            <div class="w-24 h-24 shrink-0 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden">
-              <img v-if="preview" :src="preview" class="w-full h-full object-cover" />
-              <font-awesome-icon v-else icon="fa-solid fa-image" class="text-3xl text-slate-300" />
-            </div>
-            <div class="min-w-0">
-              <p class="font-semibold text-slate-700">Click to upload an image</p>
-              <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF or WEBP, up to 5 MB</p>
-              <p v-if="fileName" class="mt-1 truncate text-xs font-medium text-emerald-700">{{ fileName }}</p>
-            </div>
-            <input type="file" name="image" accept="image/png,image/jpeg,image/gif,image/webp"
-              class="sr-only" @change="onFile" />
-          </label>
-        </section>
-
-         <!-- 3. Storage -->
-        <section>
-          <div class="flex items-center gap-3 mb-4">
-            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">3</span>
             <h2 class="text-lg font-bold text-slate-800">Storage</h2>
           </div>
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">batchId</label>
-              <input type="text" name="batchId" required placeholder="e.g. B-2026-001"
-                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">StockID (Batch ID)</label>
+              <input type="text" v-model="form.batchId" required placeholder="e.g. B-2026-001"
+                :class="batchDuplicate ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : 'border-slate-200 focus:border-emerald-600 focus:ring-emerald-200'"
+                class="w-full px-4 py-3 rounded-xl border bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 transition" />
+              <p v-if="batchDuplicate" class="text-xs font-medium text-red-500 mt-1.5 flex items-center gap-1">
+                <font-awesome-icon icon="fa-solid fa-circle-xmark" />
+                This product already has Batch ID "{{ form.batchId }}" in stock.
+              </p>
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-600 mb-1.5">Location</label>
-              <input type="text" name="location" list="locationList" required
+              <input type="text" v-model="form.location" list="locationList" required
                 autocomplete="off" placeholder="e.g. Warehouse A - Shelf 3"
                 class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
               <datalist id="locationList">
@@ -112,77 +154,53 @@
           </div>
         </section>
 
-        <!-- 4. Price & quantity -->
+        <!-- 3. Status & quantity -->
         <section>
           <div class="flex items-center gap-3 mb-4">
-            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">4</span>
-            <h2 class="text-lg font-bold text-slate-800">Price &amp; quantity</h2>
+            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">3</span>
+            <h2 class="text-lg font-bold text-slate-800">Status &amp; quantity</h2>
           </div>
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Price</label>
-              <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
-                <input type="number" name="price" min="0" step="0.01" required placeholder="0.00"
-                  class="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
-              </div>
-            </div>
-            <div>
               <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quantity</label>
-              <input type="number" name="quantity" min="0" required placeholder="0"
+              <input type="number" v-model.number="form.quantity" min="0" required placeholder="0"
                 class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:border-emerald-600 focus:ring-emerald-200 transition" />
             </div>
-          </div>
-        </section>
 
-        <!-- 5. Status -->
-        <section>
-          <div class="flex items-center gap-3 mb-4">
-            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-bold flex items-center justify-center">5</span>
-            <h2 class="text-lg font-bold text-slate-800">Status</h2>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-
-            <label class="cursor-pointer">
-              <input type="radio" name="status" value="In Stock" required class="peer sr-only" />
-              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
-                <font-awesome-icon icon="fa-solid fa-circle-check" class="text-lg text-emerald-600" />
-                <span class="text-xs font-semibold text-slate-700">In Stock</span>
+            <div>
+              <div class="flex items-center gap-3">
+                <label class="block text-sm font-semibold text-slate-600 mb-1.5">Status</label>
               </div>
-            </label>
 
-            <label class="cursor-pointer">
-              <input type="radio" name="status" value="Low Stock" class="peer sr-only" />
-              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
-                <font-awesome-icon icon="fa-solid fa-battery-quarter" class="text-lg text-yellow-500" />
-                <span class="text-xs font-semibold text-slate-700">Low Stock</span>
+              <div class="relative">
+                <select
+                  v-model="form.status"
+                  required
+                  class="w-full appearance-none rounded-xl bg-white border border-slate-200 py-3.5 pl-4 pr-12
+                        text-sm font-semibold text-slate-700 outline-none transition cursor-pointer shadow-sm
+                        hover:border-emerald-400 hover:bg-slate-50/50 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200"
+                >
+                  <option value="" disabled class="text-slate-400 py-3">Select status</option>
+                  <option value="In Stock" class="py-2 text-slate-700">🟢 In Stock</option>
+                  <option value="Low Stock" class="py-2 text-slate-700">🟡 Low Stock</option>
+                  <option value="Out of Stock" class="py-2 text-slate-700" :disabled="islowquantity">🔴 Out of Stock</option>
+                  <option value="Reserved" class="py-2 text-slate-700">🔵 Reserved</option>
+                  <option value="Damaged" class="py-2 text-slate-700">🟠 Damaged</option>
+                </select>
+
+                <!-- Chevron Icon -->
+                <svg
+                  class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600 pointer-events-none transition-transform"
+                  fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+                >
+                  <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
               </div>
-            </label>
 
-            <label class="cursor-pointer">
-              <input type="radio" name="status" value="Out of Stock" class="peer sr-only" />
-              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
-                <font-awesome-icon icon="fa-solid fa-circle-xmark" class="text-lg text-red-500" />
-                <span class="text-xs font-semibold text-slate-700">Out of Stock</span>
-              </div>
-            </label>
-
-            <label class="cursor-pointer">
-              <input type="radio" name="status" value="Reserved" class="peer sr-only" />
-              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
-                <font-awesome-icon icon="fa-solid fa-bookmark" class="text-lg text-blue-500" />
-                <span class="text-xs font-semibold text-slate-700">Reserved</span>
-              </div>
-            </label>
-
-            <label class="cursor-pointer">
-              <input type="radio" name="status" value="Damaged" class="peer sr-only" />
-              <div class="border border-slate-200 hover:border-emerald-300 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-200 rounded-xl py-3 px-2 flex flex-col items-center gap-1.5 transition">
-                <font-awesome-icon icon="fa-solid fa-triangle-exclamation" class="text-lg text-orange-500" />
-                <span class="text-xs font-semibold text-slate-700">Damaged</span>
-              </div>
-            </label>
-
+              <p v-if="islowquantity" class="text-xs text-slate-500 mt-1.5">
+                Out of Stock is disabled because quantity is above 0.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -192,8 +210,8 @@
             class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-50">
             Cancel
           </router-link>
-          <button type="submit" :disabled="loading"
-            class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-60 inline-flex items-center gap-2 shadow-lg shadow-emerald-600/30">
+          <button type="submit" :disabled="loading || productStatus !== 'ok' || batchDuplicate"
+            class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50 inline-flex items-center gap-2 shadow-lg shadow-emerald-600/30">
             <font-awesome-icon :icon="loading ? 'fa-solid fa-spinner' : 'fa-solid fa-floppy-disk'" :spin="loading" />
             {{ loading ? "Saving..." : "Save stock" }}
           </button>
@@ -205,73 +223,204 @@
 
 <script>
 import axios from "axios";
-import { ref, onBeforeUnmount, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 const LOCATION_KEY = "savedStockLocations";
+const API = "http://localhost:2026";
 
 export default {
   setup() {
     const router = useRouter();
     const loading = ref(false);
-    const preview = ref("");
-    const fileName = ref("");
+    const searchQuery = ref("");
+    // null | "ok" | "no" | "multiple"
+    const productStatus = ref(null);
+    const matchedProduct = ref(null);
+    const candidates = ref([]);
+    // stock rows that already exist for the matched product
+    const existingStocks = ref([]);
 
-    // ---- Product ID validation check (last 8 characters) ----
-    const productId = ref("");
-    const productStatus = ref(null); // null, 'ok', or 'no'
+    const form = ref({
+      batchId: "",
+      location: "",
+      quantity: "",
+      status: "",
+    });
 
-    const checkProductId = async () => {
-      const inputVal = productId.value.trim();
-      if (!inputVal) {
-        productStatus.value = null;
+    /* ---------- quantity rule for the "Out of Stock" option ---------- */
+
+    // true  => quantity is above 0, so the Out of Stock option is disabled
+    // false => quantity is 0 or empty, so it is enabled
+    const islowquantity = computed(() => Number(form.value.quantity) > 0);
+
+    // if Out of Stock was selected and the option becomes disabled, clear it
+    watch(islowquantity, (disabled) => {
+      if (disabled && form.value.status === "Out of Stock") {
+        form.value.status = "";
+      }
+    });
+
+    /* ---------- helpers ---------- */
+
+    // lowercase, trim, collapse repeated inner spaces
+    const norm = (v) =>
+      (v ?? "").toString().trim().toLowerCase().replace(/\s+/g, " ");
+
+    // return ALL products that match, strongest rule first
+    const findMatches = (rows, input) => {
+      const q = norm(input);
+      if (!q) return [];
+
+      // 1. full ID is unique by definition
+      const byFullId = rows.filter((p) => norm(p._id) === q);
+      if (byFullId.length) return byFullId;
+
+      // 2. other exact matches (last 8 of ID, code, last 8 of code, name, model)
+      const exact = rows.filter((p) => {
+        const id = norm(p._id);
+        const code = norm(p.productCode);
+        return (
+          id.slice(-8) === q ||
+          code === q ||
+          (code && code.slice(-8) === q) ||
+          norm(p.name) === q ||
+          norm(p.model) === q
+        );
+      });
+      if (exact.length) return exact;
+
+      // 3. partial match on name / model
+      return rows.filter(
+        (p) => norm(p.name).includes(q) || norm(p.model).includes(q)
+      );
+    };
+
+    // fetch products once and reuse
+    let productsCache = null;
+    const getProducts = async (force = false) => {
+      if (productsCache && !force) return productsCache;
+      const res = await axios.get(`${API}/api/products`);
+      productsCache = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || res.data?.products || [];
+      return productsCache;
+    };
+
+    const imageUrl = (rawImg) => {
+      if (!rawImg) return "";
+      if (rawImg.startsWith("http") || rawImg.startsWith("blob")) return rawImg;
+      if (rawImg.startsWith("/uploads")) return `${API}${rawImg}`;
+      return `${API}/uploads/${rawImg}`;
+    };
+
+    /* ---------- "already in stock" check ---------- */
+
+    // product may be a plain ID or a populated object
+    const stockProductId = (s) => (s.product?._id || s.product || "").toString();
+
+    // always fetch fresh so the answer is current
+    const loadExistingStock = async (product) => {
+      if (!product) {
+        existingStocks.value = [];
+        return;
+      }
+      try {
+        const res = await axios.get(`${API}/api/stocks`);
+        const rows = Array.isArray(res.data)
+          ? res.data
+          : res.data?.data || res.data?.stocks || [];
+        existingStocks.value = rows.filter(
+          (s) => stockProductId(s) === product._id.toString()
+        );
+      } catch (error) {
+        console.error("Error checking existing stock:", error);
+        existingStocks.value = [];
+      }
+    };
+
+    // same product + same Batch ID is a true duplicate
+    const batchDuplicate = computed(() => {
+      const b = norm(form.value.batchId);
+      return !!b && existingStocks.value.some((s) => norm(s.batchId) === b);
+    });
+
+    /* ---------- product lookup ---------- */
+
+    const resetMatch = () => {
+      productStatus.value = null;
+      matchedProduct.value = null;
+      candidates.value = [];
+      existingStocks.value = [];
+    };
+
+    const setMatched = async (product) => {
+      productStatus.value = "ok";
+      matchedProduct.value = product;
+      candidates.value = [];
+      await loadExistingStock(product);
+    };
+
+    const resolveProduct = async () => {
+      const inputVal = searchQuery.value;
+      if (!norm(inputVal)) {
+        resetMatch();
         return;
       }
 
-      // Get the last 8 characters of the user input (or fewer if input length is < 8)
-      const inputLast8 = inputVal.slice(-8).toLowerCase();
-
       try {
-        const res = await axios.get("http://localhost:2026/api/products");
-        const rows = Array.isArray(res.data) ? res.data : res.data?.data || [];
-        
-        const exists = rows.some((p) => {
-          const dbStr = (p.productId || p._id || p.name || "").toString().trim();
-          const dbLast8 = dbStr.slice(-8).toLowerCase();
-          return dbLast8 === inputLast8;
-        });
+        let rows = await getProducts();
+        let found = findMatches(rows, inputVal);
 
-        productStatus.value = exists ? "ok" : "no";
+        // nothing in cache? the product may have been added recently, so refetch once
+        if (!found.length) {
+          rows = await getProducts(true);
+          found = findMatches(rows, inputVal);
+        }
+
+        if (found.length === 1) {
+          await setMatched(found[0]);
+        } else if (found.length > 1) {
+          productStatus.value = "multiple"; // user must choose one
+          matchedProduct.value = null;
+          candidates.value = found;
+          existingStocks.value = [];
+        } else {
+          productStatus.value = "no";
+          matchedProduct.value = null;
+          candidates.value = [];
+          existingStocks.value = [];
+        }
       } catch (error) {
+        console.error("Error validating product:", error);
+        resetMatch();
         productStatus.value = "no";
       }
     };
 
-    // ---- Category suggestions (datalist) ----
-    const categoryList = ref([]);
-    const dbCategory = "http://localhost:2026/api/batches";
-
-    const getCategory = async () => {
-      try {
-        const res = await axios.get(dbCategory);
-        const rows = Array.isArray(res.data) ? res.data : res.data?.data || [];
-        categoryList.value = [
-          ...new Set(
-            rows
-              .map((b) =>
-                typeof b === "string" ? b : b.category?.name ?? b.category ?? b.name
-              )
-              .filter(Boolean)
-          ),
-        ];
-      } catch (error) {
-        console.error("batches request failed:", error);
-      }
+    // user picked one product from the list
+    const selectCandidate = async (product) => {
+      searchQuery.value = product._id; // full ID is unique, so re-checking gives the same product
+      await setMatched(product);
     };
-    onMounted(getCategory);
 
-    // ---- Location suggestions ----
+    // "Check" button: run immediately
+    const checkProductId = () => resolveProduct();
+
+    // typing: clear the old match right away, then re-check after 300ms
+    let debounceTimer = null;
+    const onSearchInput = () => {
+      resetMatch();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(resolveProduct, 300);
+    };
+
+    const matchedProductImage = computed(() =>
+      matchedProduct.value ? imageUrl(matchedProduct.value.image || "") : ""
+    );
+
+    /* ---------- saved locations ---------- */
+
     const loadLocations = () => {
       try {
         const saved = JSON.parse(localStorage.getItem(LOCATION_KEY) || "[]");
@@ -286,76 +435,105 @@ export default {
     const rememberLocation = (value) => {
       const v = (value || "").toString().trim();
       if (!v) return;
-      const exists = locationList.value.some((l) => l.toLowerCase() === v.toLowerCase());
+      const exists = locationList.value.some(
+        (l) => l.toLowerCase() === v.toLowerCase()
+      );
       if (exists) return;
 
       locationList.value.push(v);
       try {
         localStorage.setItem(LOCATION_KEY, JSON.stringify(locationList.value));
-      } catch {
-        /* storage unavailable */
+      } catch {}
+    };
+
+    /* ---------- submit ---------- */
+
+    const submit = async () => {
+      clearTimeout(debounceTimer);
+
+      // if not matched yet, try to resolve from the typed text
+      if (productStatus.value !== "ok" || !matchedProduct.value) {
+        if (!norm(searchQuery.value)) {
+          alert("Please enter a valid product ID or name.");
+          return;
+        }
+        await resolveProduct();
       }
-    };
 
-    // ---- Image preview ----
-    const clearPreview = () => {
-      if (preview.value) URL.revokeObjectURL(preview.value);
-      preview.value = "";
-      fileName.value = "";
-    };
-
-    const onFile = (e) => {
-      const file = e.target.files[0];
-      clearPreview();
-      if (!file) return;
-
-      if (file.size > MAX_SIZE) {
-        alert("Image must be 5 MB or smaller");
-        e.target.value = "";
+      if (productStatus.value === "multiple") {
+        alert("More than one product matches. Please pick one from the list.");
         return;
       }
-      preview.value = URL.createObjectURL(file);
-      fileName.value = file.name;
-    };
 
-    // ---- Submit ----
-    const submit = async (e) => {
-      const data = new FormData(e.target);
+      // final check
+      if (productStatus.value !== "ok" || !matchedProduct.value) {
+        alert(
+          "Please enter a valid product ID or name that exists in the database and click 'Check'."
+        );
+        return;
+      }
 
-      const picked = data.get("image");
-      const hasPicture = picked instanceof File && picked.size > 0;
+      // Out of Stock is not allowed while quantity is above 0
+      if (islowquantity.value && form.value.status === "Out of Stock") {
+        alert("Out of Stock is not allowed when quantity is above 0.");
+        return;
+      }
+
+      // re-check stock right before saving, in case someone else just added it
+      await loadExistingStock(matchedProduct.value);
+      if (batchDuplicate.value) {
+        alert(`This product already has Batch ID "${form.value.batchId}" in stock.`);
+        return;
+      }
+
+      const payload = {
+        product: matchedProduct.value._id,
+        name:
+          matchedProduct.value.name ||
+          matchedProduct.value.model ||
+          "Unnamed Product",
+        category: matchedProduct.value.category || "General",
+        salePrice:
+          matchedProduct.value.salePrice || matchedProduct.value.price || 0,
+        batchId: form.value.batchId,
+        location: form.value.location,
+        quantity: Number(form.value.quantity),
+        status: form.value.status,
+      };
 
       loading.value = true;
       try {
-        const res = await axios.post("http://localhost:2026/api/stocks", data);
-
-        rememberLocation(data.get("location"));
-
-        if (hasPicture && !res.data?.data?.image) {
-          alert("Stock saved, but the server did not keep the picture.");
-        }
+        await axios.post(`${API}/api/stocks`, payload);
+        rememberLocation(form.value.location);
         router.replace("/stocks");
       } catch (err) {
-        alert(err.response?.data?.error || err.response?.data?.message || "Server error");
+        alert(
+          err.response?.data?.error ||
+            err.response?.data?.message ||
+            "Server error"
+        );
       } finally {
         loading.value = false;
       }
     };
 
-    onBeforeUnmount(clearPreview);
-
     return {
       submit,
+      islowquantity,
       loading,
-      preview,
-      fileName,
-      onFile,
-      categoryList,
-      dbCategory,
-      locationList,
-      productId,
+      searchQuery,
       productStatus,
+      matchedProduct,
+      matchedProductImage,
+      candidates,
+      existingStocks,
+      batchDuplicate,
+      selectCandidate,
+      imageUrl,
       checkProductId,
+      onSearchInput,
+      locationList,
+      form,
     };
   },
 };

@@ -1,7 +1,7 @@
 <template>
 <div class="min-h-screen bg-slate-100 rounded-md p-6 relative">
 
-    <!-- ================= TOAST NOTIFICATION (w-full style) ================= -->
+    <!-- Toast Notification -->
     <Transition
         enter-active-class="transform transition ease-out duration-300"
         enter-from-class="-translate-y-2 opacity-0"
@@ -26,7 +26,7 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Stock Inventory</h1>
-            <p class="mt-1 text-sm text-slate-500">Monitor your products and stock levels</p>
+            <p class="mt-1 text-sm text-slate-500">Monitor your product batches and stock levels</p>
         </div>
         <div class="flex gap-2">
             <button @click="router.replace('/stocks/AddStocks')" class="flex items-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white shadow-lg shadow-green-700/20 transition hover:bg-green-800">
@@ -41,7 +41,7 @@
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-slate-500">Total Products</p>
+                    <p class="text-sm text-slate-500">Total Batches</p>
                     <h2 class="mt-2 text-2xl font-bold text-slate-800">{{ stocks.length }}</h2>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 text-green-700">
@@ -89,17 +89,17 @@
 
     <!-- Stock Table -->
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <!-- Table Header -->
+        <!-- Table Header & Filters -->
         <div class="flex flex-col gap-4 border-b border-slate-200 p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <h2 class="text-lg font-bold text-slate-800">Stock List</h2>
-                <p class="text-sm text-slate-500">Manage current product quantities</p>
+                <p class="text-sm text-slate-500">Manage current product batches and quantities</p>
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row">
                 <div class="relative">
                     <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input v-model.trim="search" type="text" placeholder="Search product..." class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-4 outline-none transition focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-600/10 sm:w-64" />
+                    <input v-model.trim="search" type="text" placeholder="Search product or batch..." class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-4 outline-none transition focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-600/10 sm:w-64" />
                 </div>
 
                 <select v-model="categoryFilter" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-green-600 focus:bg-white">
@@ -109,16 +109,16 @@
             </div>
         </div>
 
-        <!-- Table -->
+        <!-- Table View -->
         <div class="overflow-x-auto">
-            <table class="w-full min-w-237.5">
+            <table class="w-full min-w-[950px]">
                 <thead class="bg-slate-50">
                     <tr class="border-b border-slate-200 text-left">
-                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Product ID</th>
-                        <th class="px-5 py-4 text-right text-xs font-bold uppercase text-slate-500">Price</th>
+                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Product Name</th>
                         <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Category</th>
-                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">batchId</th>
+                        <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Stock ID (Batch ID)</th>
                         <th class="px-5 py-4 text-xs font-bold uppercase text-slate-500">Location</th>
+                        <th class="px-5 py-4 text-right text-xs font-bold uppercase text-slate-500">Sale Price</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Quantity</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Status</th>
                         <th class="px-5 py-4 text-center text-xs font-bold uppercase text-slate-500">Action</th>
@@ -131,49 +131,55 @@
                     </tr>
 
                     <tr v-for="stock in paginated" :key="stock._id" class="border-b border-slate-100 transition hover:bg-slate-50">
+                        <!-- Product Name -->
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-lg font-bold text-green-700">
-                                    <span>{{ String(stock.product || '?').charAt(0).toUpperCase() }}</span>
-                                    <img
-                                        v-if="stock.image && !failed[stock._id]"
-                                        :src="imageOf(stock.image)"
-                                        :alt="stock.product"
-                                        class="absolute inset-0 h-full w-full object-cover"
-                                        @error="failed[stock._id] = true"
-                                    />
+                                <div class="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-sm font-bold text-green-700">
+                                    <span>{{ String(productName(stock) || 'P').charAt(0).toUpperCase() }}</span>
+                                    <img v-if="imageSrc(stock) && !failed[stock._id]"
+                                         :src="imageSrc(stock)" :alt="productName(stock)"
+                                         class="absolute inset-0 h-full w-full object-cover"
+                                         @error="failed[stock._id] = true" />
                                 </div>
-                                <p class="font-semibold text-slate-800">{{ stock.product }}</p>
+                                <div>
+                                    <p class="font-semibold text-slate-800 text-sm">{{ productName(stock) || 'Unnamed Product' }}</p>
+                                    <p class="text-xs text-slate-400 font-mono">ID: {{ stock.product?._id || stock.product || 'N/A' }}</p>
+                                </div>
                             </div>
                         </td>
 
-                        <td class="px-5 py-4 text-sm font-medium text-slate-600">{{ stock.batchId }}</td>
-                        <td class="px-5 py-4 text-sm font-medium text-slate-600">{{ stock.location }}</td>
-
+                        <!-- Category -->
                         <td class="px-5 py-4">
                             <span class="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
-                                {{ stock.category }}
+                                {{ stock.category || stock.product?.category || 'General' }}
                             </span>
                         </td>
 
-                        <td class="px-5 py-4 text-right font-semibold text-slate-700">${{ stock.price }}</td>
+                        <!-- Stock ID (Batch ID) -->
+                        <td class="px-5 py-4 text-sm font-medium text-slate-600 font-mono">{{ stock.batchId }}</td>
 
+                        <!-- Location -->
+                        <td class="px-5 py-4 text-sm font-medium text-slate-600">{{ stock.location }}</td>
+
+                        <!-- Sale Price (live price from Products first, saved copy as fallback) -->
+                        <td class="px-5 py-4 text-right font-semibold text-slate-700">${{ stock.product?.salePrice ?? stock.salePrice ?? 0 }}</td>
+
+                        <!-- Quantity -->
                         <td class="px-5 py-4 text-center">
                             <span class="font-bold text-slate-800">{{ stock.quantity }}</span>
                         </td>
 
+                        <!-- Status -->
                         <td class="px-5 py-4 text-center">
                             <span :class="badge(stock.status)" class="rounded-full px-3 py-1.5 text-xs font-semibold">
                                 {{ stock.status }}
                             </span>
                         </td>
 
+                        <!-- Actions -->
                         <td class="px-5 py-4">
                             <div class="flex justify-center gap-2">
-                                <button class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-700 hover:bg-green-100">
-                                    <font-awesome-icon icon="fa-solid fa-eye" />
-                                </button>
-                                <button @click="router.replace(`/stocks/editStock/${stock._id}`)" class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
+                                <button @click="router.replace(`/stocks/editStock/${stock._id}`)" class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Edit Stock">
                                     <font-awesome-icon icon="fa-solid fa-pen" />
                                 </button>
                                 <button
@@ -204,7 +210,7 @@
                 <span class="font-semibold text-slate-700">
                     {{ filtered.length ? (page - 1) * perPage + 1 : 0 }}–{{ Math.min(page * perPage, filtered.length) }}
                 </span>
-                of <span class="font-semibold text-slate-700">{{ filtered.length }}</span> products
+                of <span class="font-semibold text-slate-700">{{ filtered.length }}</span> items
             </p>
 
             <div class="flex items-center gap-2">
@@ -234,7 +240,7 @@
         </div>
     </div>
 
-    <!-- ================= MODERN DELETE CONFIRMATION MODAL ================= -->
+    <!-- Delete Confirmation Modal -->
     <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 text-center border border-slate-100 transform transition-all">
             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 text-2xl mb-4">
@@ -242,7 +248,7 @@
             </div>
             <h3 class="text-xl font-bold text-slate-800">Delete Stock Item?</h3>
             <p class="mt-2 text-sm text-slate-500">
-                Are you sure you want to delete <span class="font-semibold text-slate-700">{{ stockToDelete?.product || 'this item' }}</span> (Batch: {{ stockToDelete?.batchId }})? This action cannot be undone.
+                Are you sure you want to delete <span class="font-semibold text-slate-700">{{ stockToDelete ? productName(stockToDelete) : 'this item' }}</span> (Batch: {{ stockToDelete?.batchId }})? This action cannot be undone.
             </p>
 
             <div class="mt-6 flex gap-3 justify-center">
@@ -268,39 +274,29 @@
 
 <script>
 import axios from "axios";
-import {
-    ref,
-    computed,
-    onMounted,
-    watch,
-    inject
-} from "vue";
-import {
-    useRouter
-} from "vue-router";
+import { ref, computed, onMounted, watch, inject } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
     setup() {
         const router = useRouter();
         const BASE = "http://localhost:2026";
-        const dbCategory ="http://localhost:2026/api/batches"; 
         const stocks = ref([]);
         const search = ref("");
         const categoryFilter = ref("");
-        const stockCount = inject("stockCount");
-        const lowStockCount = inject("lowStockCount");
-        const outOfStockCount = inject("outOfStockCount");
 
-        // pagination state
+        const stockCount = inject("stockCount", null);
+        const lowStockCount = inject("lowStockCount", null);
+        const outOfStockCount = inject("outOfStockCount", null);
+
         const page = ref(1);
         const perPage = ref(10);
 
-        // ---------- Modern Toast State ----------
         const toast = ref({
             show: false,
             type: "success",
             title: "",
-            message: ""
+            message: "",
         });
 
         const showToast = (title, message, type = "success") => {
@@ -310,19 +306,34 @@ export default {
             }, 4000);
         };
 
-        // ---------- images ----------
         const failed = ref({});
 
-        const imageOf = (name) => {
+        /* ---------- helpers ---------- */
+
+        // folder: "uploadsStock" for stock pictures, "uploads" for product pictures
+        const imageOf = (name, folder = "uploadsStock") => {
             if (!name) return "";
             if (/^https?:\/\//.test(name)) return name;
-            return `${BASE}/uploadsStock/${String(name).split(/[\\/]/).pop()}`;
+            return `${BASE}/${folder}/${String(name).split(/[\\/]/).pop()}`;
         };
+
+        // stock's own picture first, otherwise the product's picture
+        const imageSrc = (stock) => {
+            if (stock.image) return imageOf(stock.image, "uploadsStock");
+            if (stock.product?.image) return imageOf(stock.product.image, "uploads");
+            return "";
+        };
+
+        // saved name first, otherwise the populated product's name/model
+        const productName = (stock) =>
+            stock.name || stock.product?.name || stock.product?.model || "";
+
+        /* ---------- load ---------- */
 
         const getAll = async () => {
             try {
                 const res = await axios.get(`${BASE}/api/stocks`);
-                stocks.value = res.data?.data || [];
+                stocks.value = res.data?.data || res.data || [];
                 failed.value = {};
             } catch (error) {
                 console.log(error);
@@ -330,7 +341,8 @@ export default {
             }
         };
 
-        // ---------- Delete Modal & Actions ----------
+        /* ---------- delete ---------- */
+
         const deletingId = ref(null);
         const showDeleteModal = ref(false);
         const stockToDelete = ref(null);
@@ -342,13 +354,14 @@ export default {
 
         const confirmDelete = async () => {
             if (!stockToDelete.value) return;
-            deletingId.value = stockToDelete.value._id;
-            
+            const id = stockToDelete.value._id;
+            deletingId.value = id;
+
             try {
-                await axios.delete(`${BASE}/api/stocks/${stockToDelete.value._id}`);
-                stocks.value = stocks.value.filter((s) => s._id !== stockToDelete.value._id);
+                await axios.delete(`${BASE}/api/stocks/${id}`);
+                stocks.value = stocks.value.filter((s) => s._id !== id);
                 if (page.value > totalPages.value) page.value = totalPages.value;
-                
+
                 showDeleteModal.value = false;
                 showToast("Deleted Successfully", "The stock item has been removed.", "success");
             } catch (error) {
@@ -360,15 +373,26 @@ export default {
             }
         };
 
-        const categories = computed(() => [...new Set(stocks.value.map((s) => s.category))]);
+        /* ---------- filter / pagination ---------- */
+
+        const categories = computed(() => {
+            const list = stocks.value.map((s) => s.category || s.product?.category).filter(Boolean);
+            return [...new Set(list)];
+        });
 
         const filtered = computed(() => {
             const q = search.value.toLowerCase();
-            return stocks.value.filter(
-                (s) =>
-                (!q || [s.product, s.batchId, s.location].some((v) => String(v).toLowerCase().includes(q))) &&
-                (!categoryFilter.value || s.category === categoryFilter.value)
-            );
+            return stocks.value.filter((s) => {
+                const name = productName(s);
+                const batch = s.batchId || "";
+                const loc = s.location || "";
+                const cat = s.category || s.product?.category || "";
+
+                const matchesQuery = !q || [name, batch, loc, cat].some((v) => String(v).toLowerCase().includes(q));
+                const matchesCategory = !categoryFilter.value || cat === categoryFilter.value;
+
+                return matchesQuery && matchesCategory;
+            });
         });
 
         const totalPages = computed(() =>
@@ -417,7 +441,6 @@ export default {
         return {
             router,
             BASE,
-            dbCategory,
             stocks,
             search,
             categoryFilter,
@@ -429,19 +452,17 @@ export default {
             totalPages,
             pages,
             goTo,
-            stockCount,
-            lowStockCount,
-            outOfStockCount,
             count,
             badge,
-            imageOf,
+            imageSrc,
+            productName,
             failed,
             deletingId,
             promptDelete,
             showDeleteModal,
             stockToDelete,
             confirmDelete,
-            toast
+            toast,
         };
     },
 };

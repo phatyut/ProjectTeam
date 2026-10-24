@@ -59,6 +59,7 @@ import {
       faPen,
       faLayerGroup,
       faLaptopCode,
+      faWarehouse,
      
      
       
@@ -126,7 +127,8 @@ library.add(
            faEye,
            faPen,
            faLaptopCode,
-           faLayerGroup
+           faLayerGroup,
+           faWarehouse
         );
 
 export {FontAwesomeIcon}

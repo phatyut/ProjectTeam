@@ -1,38 +1,64 @@
 <template>
-    <div class="relative w-full h-auto flex flex-col gap-3 border border-slate-50 bg-slate-50 rounded-md overflow-hidden p-3 group hover:border-green-700 hover:border-[0.5]">
+    <div class="group relative flex flex-col rounded-lg overflow-hidden bg-white text-slate-900  shadow-xl shadow-slate-900/5 ring-1 ring-slate-900/5 transition-all duration-300  hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-900/10">
+        <!-- Top Image Container with floating branch pill -->
+        <div class="relative h-48 bg-gradient-to-b from-slate-50 to-slate-100/60 flex items-center justify-center p-6 overflow-hidden">
+            <!-- Floating Branch Tag -->
+            <div class="absolute top-3 left-3 z-5">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-white/80 backdrop-blur-md text-green-800 shadow-sm ring-1 ring-slate-900/5">
+                    {{ branch }}
+                </span>
+            </div>
 
-        <div class="flex flex-col gap-2.5">
-            <div class="flex justify-center items-center h-50 w-full transition-all duration-400 group-hover:scale-110">
-                <img
-                    :src="imageSrc"
-                    alt=""
-                    class="max-h-full object-contain cursor-zoom-in"
-                    @error="onImgError"
-                    @click="isEnlarged = true"
+            <!-- Product Image -->
+            <img
+                :src="imageSrc"
+                alt=""
+                class="relative max-h-full object-contain drop-shadow-xl cursor-zoom-in transition-transform duration-500 group-hover:scale-105"
+                @error="onImgError"
+                @click="isEnlarged = true"
+            >
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex flex-col flex-1 p-5 gap-4">
+            <!-- Name & Details Link -->
+            <div class="flex items-start justify-between gap-2">
+                <h3 class="font-bold text-slate-900 text-base leading-snug line-clamp-2">
+                    {{ name }}
+                </h3>
+                <button
+                    class="shrink-0 text-xs font-medium text-slate-400 transition-colors hover:text-green-700 underline-offset-4 hover:underline"
+                    @click="$emit('view')"
                 >
+                    Details
+                </button>
             </div>
 
-            <div class="flex justify-between items-center">
-                <div>{{ name }}</div>
-                <div class="text-green-700 font-eng">{{ price }}$</div>
-            </div>
+            <!-- Bottom Action Bar: Price + Add Button -->
+            <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block leading-none">Price</span>
+                    <span class="text-xl font-black text-slate-900 font-eng tracking-tight">{{ price }}$</span>
+                </div>
 
-            <div class="font-eng text-green-700">{{ branch }}</div>
-
-            <div class="flex *:px-1 gap-2 *:rounded-md">
-                <button class="border border-green-700" @click="$emit('view')">view</button>
-                <button class="w-full py-2 font-bold text-white bg-green-900" @click.once="$emit('add')">Add</button>
+                <button
+                    class="inline-flex items-center justify-center px-4 py-2.5 rounded-2xl bg-green-900 text-white text-sm font-semibold tracking-wide 
+                           transition-all hover:bg-green-800 active:scale-95 shadow-lg shadow-green-900/20"
+                    @click.once="$emit('add')"
+                >
+                    + Add
+                </button>
             </div>
         </div>
 
-        <!-- Full-screen image, rendered outside the card so overflow-hidden and scale can't affect it -->
+        <!-- Full-screen image preview -->
         <Teleport to="body">
             <div
                 v-if="isEnlarged"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 cursor-zoom-out"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 cursor-zoom-out"
                 @click="isEnlarged = false"
             >
-                <img :src="imageSrc" alt="" class="max-w-full max-h-full object-contain">
+                <img :src="imageSrc" alt="" class="max-w-full max-h-full object-contain drop-shadow-2xl">
             </div>
         </Teleport>
     </div>

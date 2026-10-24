@@ -29,7 +29,7 @@
         </button>
 
         <button @click="AddItemsToWeb"
-          class="group flex w-fit items-center gap-2 rounded-xl bg-gradient-to-br from-[#006B2D] via-[#168C20] to-[#7FCB0A] px-5 py-2.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5"
+          class="group flex items-center gap-2 rounded-xl bg-green-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-green-700/20 transition hover:bg-green-800"
         >
           <span class="text-lg transition duration-300 group-hover:rotate-90">+</span>
           Add Product
